@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Song (models.Model):
-    id = models.BigIntegerField(primary_key=True, null=False)
+    id = models.IntegerField(primary_key=True, null=False)
     artist = models.CharField(max_length=255, null=False)
     title = models.CharField(max_length=255, null=False)
 
