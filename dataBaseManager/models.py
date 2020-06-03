@@ -59,8 +59,10 @@ class Team(models.Model):
     scored_points_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     field_goals_made_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     field_goals_attempts_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
-    three_points_field_goals_made_per_game = models.DecimalField(null=False,  default=0.00, max_digits=65, decimal_places=3)
-    three_points_field_goals_attempts_per_game = models.DecimalField(null=False, max_digits=65, default=0.00, decimal_places=3)
+    three_points_field_goals_made_per_game = models.DecimalField(null=False, default=0.00, max_digits=65,
+                                                                 decimal_places=3)
+    three_points_field_goals_attempts_per_game = models.DecimalField(null=False, max_digits=65, default=0.00,
+                                                                     decimal_places=3)
     free_throws_made_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     free_throws_attempts_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     assists_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
@@ -71,18 +73,26 @@ class Team(models.Model):
     turnovers_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     personal_fouls_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
 
+    class Meta:
+        verbose_name = 'Team'
+        verbose_name_plural = 'Teams'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
 
 class Player(models.Model):
     player_id = models.IntegerField(primary_key=True, null=False)
     team_id = models.ForeignKey(Team, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, null=False)
+    first_name = models.CharField(max_length=255, null=False)
     last_name = models.CharField(max_length=255, null=False)
-    dorsal = models.IntegerField(null=False)
+    jersey = models.IntegerField(null=False)
     birth_date = models.DateField(null=False)
     height = models.IntegerField(null=False)
     weight = models.IntegerField(null=False)
 
-    class Position (models.TextChoices):
+    class Position(models.TextChoices):
         POINTGUARD = 'PG'
         SHOOTINGGUARD = 'SG'
         SMALLFORWARD = 'SF'
@@ -110,8 +120,10 @@ class Player(models.Model):
     scored_points_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     field_goals_made_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     field_goals_attempts_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
-    three_points_field_goals_made_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
-    three_points_field_goals_attempts_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
+    three_points_field_goals_made_per_game = models.DecimalField(null=False, default=0.00, max_digits=65,
+                                                                 decimal_places=3)
+    three_points_field_goals_attempts_per_game = models.DecimalField(null=False, default=0.00, max_digits=65,
+                                                                     decimal_places=3)
     free_throws_made_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     free_throws_attempts_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     assists_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
@@ -122,9 +134,25 @@ class Player(models.Model):
     turnovers_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
     personal_fouls_per_game = models.DecimalField(null=False, default=0.00, max_digits=65, decimal_places=3)
 
+    class Meta:
+        verbose_name = 'Player'
+        verbose_name_plural = 'Players'
+        ordering = ['team_id']
+
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
 
 class Game(models.Model):
-    game_id = models.IntegerField(primary_key=True, null=False)
+    game_id = models.CharField(max_length=255, primary_key=True, null=False)
     local_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='local_team')
     visitor_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='visitor_team')
     winner_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='winner_team')
+
+    class Meta:
+        verbose_name = 'Game'
+        verbose_name_plural = 'Games'
+        ordering = ['game_id']
+
+    def __str__(self):
+        return f'{self.visitor_team} VS@ {self.local_team}'

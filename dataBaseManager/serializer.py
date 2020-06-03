@@ -86,9 +86,10 @@ class PlayerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        return Team.objects.create(**validated_data)
+        return Player.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        instance.team_id = validated_data.get('team_id', instance.team_id)
         instance.played_games = validated_data.get('played_games', instance.played_games)
         instance.played_minutes = validated_data.get('played_minutes', instance.played_minutes)
         instance.scored_points = validated_data.get('scored_points', instance.scored_points)
@@ -139,3 +140,6 @@ class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = '__all__'
+
+    def create(self, validated_data):
+        return Game.objects.create(**validated_data)

@@ -2,3 +2,7 @@ django==3.0.6
 djangorestframework==3.11.0
 pymysql==0.9.3
 cryptography==2.9.2
+numpy==1.18.4
+pandas==1.0.4
+python-dateutil==2.8.1
+requests==2.23.0
