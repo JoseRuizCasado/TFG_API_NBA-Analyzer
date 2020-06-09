@@ -9,12 +9,15 @@ from .serializer import TeamSerializer, PlayerSerializer, GameSerializer
 
 class ListTeams(views.APIView):
     """
-        Get list of all Teams stored in the database
-    """
+     Get list of all Teams stored in the database
+
+     Return
+     ----------
+         List of Teams, each Team formatted as JSON
+     """
 
     @staticmethod
     def get(request):
-        data = []
         teams = Team.objects.all()
         # Transform team objects into JSON format
         serializer = TeamSerializer(teams, many=True)
@@ -23,7 +26,17 @@ class ListTeams(views.APIView):
 
 class GetTeamById(views.APIView):
     """
-        Get the Team with selected id
+    Get the Team with selected id
+
+    Parameter
+    ----------
+    team_id: int
+        Team numerical id
+
+    Return
+    -------
+    team: JSON
+        Team formatted as JSON
     """
 
     @staticmethod
@@ -36,7 +49,17 @@ class GetTeamById(views.APIView):
 
 class GetTeamByAbbreviation(views.APIView):
     """
-        Get the Team with selected abbreviation
+    Get the Team with selected abbreviation
+
+    Parameter
+    ----------
+    team_abbreviation: str
+        Team abbreviation
+
+    Return
+    -------
+    team: JSON
+        Team formatted as JSON
     """
 
     @staticmethod
@@ -49,7 +72,17 @@ class GetTeamByAbbreviation(views.APIView):
 
 class CreateTeam(views.APIView):
     """
-        Create Team in the database with the request's body information
+    Create Team in the database with the request's body information
+
+    Parameter
+    ----------
+    request: HttpRequest
+        Request with Team data as JSON
+
+    Return
+    -------
+    response: Response
+        Response with the success of the request
     """
 
     @staticmethod
@@ -64,7 +97,17 @@ class CreateTeam(views.APIView):
 
 class UpdateTeam(views.APIView):
     """
-        Update the Team info with the included information in the request
+    Update the Team info with the included information in the request
+
+    Parameter
+    ----------
+    request: HttpRequest
+        Request with Team data as JSON
+
+    Return
+    -------
+    response: Response
+        Response with the success of the request
     """
 
     @staticmethod
@@ -80,7 +123,17 @@ class UpdateTeam(views.APIView):
 
 class ListPlayersByTeamId(views.APIView):
     """
-        Get the player's list of selected team
+    Get the player's list of selected team
+
+    Parameter
+    ----------
+    team_id: int
+        Team abbreviation
+
+    Return
+    -------
+    players: List
+        List of Players, each Player formatted as JSON
     """
 
     @staticmethod
@@ -93,7 +146,17 @@ class ListPlayersByTeamId(views.APIView):
 
 class GetPlayerById(views.APIView):
     """
-        Get player by id
+    Get player by id
+
+    Parameter
+    ----------
+    player_id: int
+        Player numerical id
+
+    Return
+    -------
+    player: Player
+        Player formatted as JSON
     """
 
     @staticmethod
@@ -106,7 +169,17 @@ class GetPlayerById(views.APIView):
 
 class CreatePlayer(views.APIView):
     """
-        Create Player in the database with the request's body information
+    Create Player in the database with the request's body information
+
+    Parameter
+    ----------
+    request: HttpRequest
+        Request with Player data as JSON
+
+    Return
+    -------
+    response: Response
+        Response with the success of the request
     """
 
     @staticmethod
@@ -121,7 +194,17 @@ class CreatePlayer(views.APIView):
 
 class UpdatePlayer(views.APIView):
     """
-        Update the Player info with the included information in the request
+    Update the Player info with the included information in the request
+
+    Parameter
+    ----------
+    request: HttpRequest
+        Request with Player data as JSON
+
+    Return
+    -------
+    response: Response
+        Response with the success of the request
     """
 
     @staticmethod
@@ -137,7 +220,17 @@ class UpdatePlayer(views.APIView):
 
 class GetGameById(views.APIView):
     """
-        Get Game by id
+    Get Game by id
+
+    Parameter
+    ----------
+    game_id: int
+        Game numerical id
+
+    Return
+    -------
+    game: Game
+        Game formatted as JSON
     """
 
     @staticmethod
@@ -150,7 +243,17 @@ class GetGameById(views.APIView):
 
 class ListGamesByLocalTeamId(views.APIView):
     """
-        List Game by local team id
+    List Game by local team id
+
+    Parameter
+    ----------
+    local_team_id: int
+        Local Team numerical id
+
+    Return
+    -------
+    game: Game
+        Game formatted as JSON
     """
 
     @staticmethod
@@ -163,7 +266,17 @@ class ListGamesByLocalTeamId(views.APIView):
 
 class ListGamesByVisitorTeamId(views.APIView):
     """
-        List Game by visitor team id
+    List Game by visitor team id
+
+    Parameter
+    ----------
+    visitor_team_id: int
+        Visitor Team numerical id
+
+    Return
+    -------
+    game: Game
+        Game formatted as JSON
     """
 
     @staticmethod
@@ -176,7 +289,17 @@ class ListGamesByVisitorTeamId(views.APIView):
 
 class ListGamesByWinnerTeamId(views.APIView):
     """
-        List Game by winner team id
+    List Game by winner team id
+
+    Parameter
+    ----------
+    winner_team_id: int
+        Winner Team numerical id
+
+    Return
+    -------
+    game: Game
+        Game formatted as JSON
     """
 
     @staticmethod
@@ -189,7 +312,12 @@ class ListGamesByWinnerTeamId(views.APIView):
 
 class ListTeamGames(views.APIView):
     """
-        List all Team's Games
+    List all Team's Games
+
+    Return
+    -------
+    games: List
+        List of Games, each Game formatted as JSON
     """
 
     @staticmethod
@@ -202,7 +330,17 @@ class ListTeamGames(views.APIView):
 
 class CreateGame(views.APIView):
     """
-        Create Game in the database with the request's body information
+    Create Game in the database with the request's body information
+
+    Parameter
+    ----------
+    request: HttpRequest
+        Request with Game data as JSON
+
+    Return
+    -------
+    response: Response
+        Response with the success of the request
     """
 
     @staticmethod
