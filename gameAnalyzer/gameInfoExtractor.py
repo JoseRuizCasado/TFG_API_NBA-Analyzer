@@ -3,21 +3,33 @@ import pandas as pd
 import json
 
 
-def extract_player_shots_coordinates(game_id, player_shots):
+def extract_player_shots_coordinates(game_id, player_id, team_id):
     """
     Extract shot coordinates for each recorder shot of the player in the game.
     Then save extracted coordinates in the player associated json file.
     :param game_id: Game string identifies, matches the files' name
-    :param player_shots: pandas.DataFrame with player shots to extract
+    :param player_id: Player numerical identifies
     :return:
     """
-    # TODO: create player_id.json file for player, in team_id directory. JSON with miss and made shots coordinates
-    # player_id{
-    #   'made_shots': [(x,y)...]
-    #   'miss_shots': [(x,y)...]
-    # }
+    shots_data = pd.read_csv('gameAnalyzer/data/shots.csv')
+    player_json = {
+        'made_shots': [],
+        'miss_shots': []
+    }
 
-    pass
+    shots_data = shots_data[(shots_data['GAME_ID'] == int(game_id)) & (shots_data['PLAYER_ID'] == player_id)]
+    for shot in shots_data:
+        x = shot['LOC_X']
+        y = shot['LOC_Y']
+        if shot['SHOT_MADE_FLAG']:
+            # Made shot
+            player_json['made_shots'].append((x, y))
+        else:
+            # Miss shot
+            player_json['miss_shots'].append((x, y))
+
+    with open(f'data/{team_id}/{player_id}.json') as file:
+        json.dump(player_json, file)
 
 
 def extract_game_info(game_id, team_id, players, description):
@@ -113,8 +125,7 @@ def extract_game_info(game_id, team_id, players, description):
         player_3pt_misses = player_misses[player_misses[description].str.contains('3PT')].shape[0]
 
         # TODO: Load shots coordinates
-        player_shots = player_made_shots.append(player_misses)
-        extract_player_shots_coordinates(game_id, player_shots)
+        extract_player_shots_coordinates(game_id, player['player_id'], team_id)
 
         # Load Player made free throws.
         player_free_throw = free_throws[free_throws['PLAYER1_ID'] == player['player_id']]
