@@ -4,6 +4,19 @@ import json
 
 
 def extract_player_shots_coordinates(game_id, player_shots):
+    """
+    Extract shot coordinates for each recorder shot of the player in the game.
+    Then save extracted coordinates in the player associated json file.
+    :param game_id: Game string identifies, matches the files' name
+    :param player_shots: pandas.DataFrame with player shots to extract
+    :return:
+    """
+    # TODO: create player_id.json file for player, in team_id directory. JSON with miss and made shots coordinates
+    # player_id{
+    #   'made_shots': [(x,y)...]
+    #   'miss_shots': [(x,y)...]
+    # }
+
     pass
 
 
@@ -84,14 +97,13 @@ def extract_game_info(game_id, team_id, players, description):
     # Read Team data, player by player
     for player in team_dict['players']:
         # Load Player made shots
-        player_shots = made_shots[made_shots['PLAYER1_ID'] == player['player_id']]
+        player_made_shots = made_shots[made_shots['PLAYER1_ID'] == player['player_id']]
         # Load Player field goals made
-        player_field_goals = player_shots.shape[0]
+        player_field_goals = player_made_shots.shape[0]
         # Load Player 3 field goals made
-        player_3pt = player_shots[player_shots[description].str.contains('3PT')].shape[0]
+        player_3pt = player_made_shots[player_made_shots[description].str.contains('3PT')].shape[0]
         # Load Player assists
         player_assists = made_shots[made_shots['PLAYER2_ID'] == player['player_id']].shape[0]
-        # TODO: Load shots coordinates
 
         # Load Player missed shots
         player_misses = missed_shots[missed_shots['PLAYER1_ID'] == player['player_id']]
@@ -99,6 +111,10 @@ def extract_game_info(game_id, team_id, players, description):
         player_field_goals_misses = player_misses.shape[0]
         # Load Player 3 field goals made.
         player_3pt_misses = player_misses[player_misses[description].str.contains('3PT')].shape[0]
+
+        # TODO: Load shots coordinates
+        player_shots = player_made_shots.append(player_misses)
+        extract_player_shots_coordinates(game_id, player_shots)
 
         # Load Player made free throws.
         player_free_throw = free_throws[free_throws['PLAYER1_ID'] == player['player_id']]
