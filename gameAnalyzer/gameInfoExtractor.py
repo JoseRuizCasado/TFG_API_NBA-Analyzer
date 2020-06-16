@@ -7,29 +7,37 @@ def extract_player_shots_coordinates(game_id, player_id, team_id):
     """
     Extract shot coordinates for each recorder shot of the player in the game.
     Then save extracted coordinates in the player associated json file.
-    :param game_id: Game string identifies, matches the files' name
-    :param player_id: Player numerical identifies
+    :param game_id: Game string identifies, matches the files' name.
+    :param player_id: Player num that identifies the player.
+    :param team_id: Team num that identifies the player team.
     :return:
     """
-    shots_data = pd.read_csv('gameAnalyzer/data/shots.csv')
+    shots_data = pd.read_csv('gameAnalyzer/data/shots/shots.csv')
     player_json = {
         'made_shots': [],
         'miss_shots': []
     }
 
     shots_data = shots_data[(shots_data['GAME_ID'] == int(game_id)) & (shots_data['PLAYER_ID'] == player_id)]
-    for shot in shots_data:
+    for index, shot in shots_data.iterrows():
         x = shot['LOC_X']
         y = shot['LOC_Y']
         if shot['SHOT_MADE_FLAG']:
             # Made shot
-            player_json['made_shots'].append((x, y))
+            player_json['made_shots'].append({'x': x, 'y': y})
         else:
             # Miss shot
-            player_json['miss_shots'].append((x, y))
+            player_json['miss_shots'].append({'x': x, 'y': y})
 
-    with open(f'data/{team_id}/{player_id}.json') as file:
-        json.dump(player_json, file)
+    with open(f'gameAnalyzer/data/coordinates/{team_id}/{player_id}.json', 'w+') as file:
+        try:
+            player_coordinates_data = json.load(file)
+            player_json['made_shots'].extend(player_coordinates_data['made_shots'])
+            player_json['miss_shots'].extend(player_coordinates_data['miss_shots'])
+        except Exception:
+            print('Nothing to load')
+
+        json.dump(player_json, file, indent=4)
 
 
 def extract_game_info(game_id, team_id, players, description):
