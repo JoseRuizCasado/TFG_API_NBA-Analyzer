@@ -183,3 +183,6 @@ class GameSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Game.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.information_loaded = validated_data('information_loaded', instance.information_loaded)

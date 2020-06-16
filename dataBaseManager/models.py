@@ -158,6 +158,7 @@ class Player(models.Model):
 
 class Game(models.Model):
     game_id = models.CharField(max_length=255, primary_key=True, null=False)
+    information_loaded = models.BooleanField(null=False, default=False)
     local_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='local_team')
     visitor_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='visitor_team')
     winner_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='winner_team')
