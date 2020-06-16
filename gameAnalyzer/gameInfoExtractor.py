@@ -12,6 +12,7 @@ def extract_player_shots_coordinates(game_id, player_id, team_id):
     :param team_id: Team num that identifies the player team.
     :return:
     """
+    # print(f'Extracting coordinates of: {player_id}')
     shots_data = pd.read_csv('gameAnalyzer/data/shots/shots.csv')
     player_json = {
         'made_shots': [],
@@ -29,15 +30,16 @@ def extract_player_shots_coordinates(game_id, player_id, team_id):
             # Miss shot
             player_json['miss_shots'].append({'x': x, 'y': y})
 
-    with open(f'gameAnalyzer/data/coordinates/{team_id}/{player_id}.json', 'w+') as file:
-        try:
-            player_coordinates_data = json.load(file)
+    try:
+        with open(f'gameAnalyzer/data/coordinates/{team_id}/{player_id}.json', 'r') as json_data:
+            player_coordinates_data = json.load(json_data)
             player_json['made_shots'].extend(player_coordinates_data['made_shots'])
             player_json['miss_shots'].extend(player_coordinates_data['miss_shots'])
-        except Exception:
-            print('Nothing to load')
+    except Exception:
+        print(f'Does not exist file associated to the player {player_id}')
 
-        json.dump(player_json, file, indent=4)
+    with open(f'gameAnalyzer/data/coordinates/{team_id}/{player_id}.json', 'w') as data:
+        json.dump(player_json, data, indent=4)
 
 
 def extract_game_info(game_id, team_id, players, description):

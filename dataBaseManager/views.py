@@ -214,6 +214,7 @@ class CreateGame(views.APIView):
             saved_game = serializer.save()
         return response.Response({'success': f'Game {saved_game.game_id} created successfully'})
 
+
 class UpdateGame(views.APIView):
     """
         Update the Game info with the included information in the request
@@ -226,5 +227,5 @@ class UpdateGame(views.APIView):
         # Add info to team instance and save it in the database
         serializer = GameSerializer(instance=saved_game, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
-            saved_player = serializer.save()
+            saved_game = serializer.save()
         return response.Response({'success': f'Game {saved_game.game_id} updated successfully'})
