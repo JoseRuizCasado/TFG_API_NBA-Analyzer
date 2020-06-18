@@ -110,9 +110,7 @@ class PlayerSerializer(serializers.ModelSerializer):
         instance.played_games += validated_data.get('played_games', 0)
         instance.played_minutes += validated_data.get('played_minutes', 0)
         instance.scored_points += validated_data.get('scored_points', 0)
-        instance.conceded_points += validated_data.get('conceded_points', 0)
         instance.field_goals_made += validated_data.get('field_goals_made', 0)
-        instance.conceded_field_goals_made += validated_data.get('conceded_field_goals_made', 0)
 
         instance.field_goals_miss += validated_data.get('field_goals_miss', 0)
         instance.field_goals_attempts += validated_data.get('field_goals_attempts', 0)
