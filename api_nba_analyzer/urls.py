@@ -18,5 +18,6 @@ from django.urls import path, re_path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path('dbmanager/', include('dataBaseManager.urls'))
+    re_path('dbmanager/', include('dataBaseManager.urls')),
+    re_path('gameanalyzer/', include('gameAnalyzer.urls'))
 ]

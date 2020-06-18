@@ -1,5 +1,3 @@
-from os import name
-
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import *
@@ -21,7 +19,8 @@ urlpatterns = [
     path('game-by-winner-team/<int:winner_team_id>', ListGamesByWinnerTeamId.as_view(),
          name='get-game-by-winner-team-id'),
     path('team-games/<int:team_id>', ListTeamGames.as_view(), name='team-games'),
-    path('create-game/', CreateGame.as_view(), name='create-game')
+    path('create-game/', CreateGame.as_view(), name='create-game'),
+    path('update-game/<str:game_id>', UpdateGame.as_view(), name='update-game')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
