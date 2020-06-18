@@ -8,16 +8,14 @@ from .serializer import TeamSerializer, PlayerSerializer, GameSerializer
 
 
 class ListTeams(views.APIView):
-    """
-     Get list of all Teams stored in the database
-
-     Return
-     ----------
-         List of Teams, each Team formatted as JSON
-     """
 
     @staticmethod
     def get(request):
+        """
+         Get list of all Teams stored in the database
+
+         :return: List of Teams, each Team formatted as JSON
+         """
         teams = Team.objects.all()
         # Transform team objects into JSON format
         serializer = TeamSerializer(teams, many=True)
@@ -25,22 +23,15 @@ class ListTeams(views.APIView):
 
 
 class GetTeamById(views.APIView):
-    """
-    Get the Team with selected id
-
-    Parameter
-    ----------
-    team_id: int
-        Team numerical id
-
-    Return
-    -------
-    team: JSON
-        Team formatted as JSON
-    """
 
     @staticmethod
     def get(request, team_id, format=None):
+        """
+        Get the Team with selected id
+        :param request:
+        :param team_id: Team numerical id
+        :return: Team formatted as JSON
+        """
         team = Team.objects.get(team_id=team_id)
         # Transform team object into JSON format
         serializer = TeamSerializer(team)
@@ -48,22 +39,15 @@ class GetTeamById(views.APIView):
 
 
 class GetTeamByAbbreviation(views.APIView):
-    """
-    Get the Team with selected abbreviation
-
-    Parameter
-    ----------
-    team_abbreviation: str
-        Team abbreviation
-
-    Return
-    -------
-    team: JSON
-        Team formatted as JSON
-    """
 
     @staticmethod
     def get(request, team_abbreviation, format=None):
+        """
+        Get the Team with selected abbreviation
+        :param request:
+        :param team_abbreviation: Team abbreviation
+        :return: Team formatted as JSON
+        """
         team = Team.objects.get(abbreviation=team_abbreviation)
         # Transform team object into JSON format
         serializer = TeamSerializer(team)
@@ -71,22 +55,14 @@ class GetTeamByAbbreviation(views.APIView):
 
 
 class CreateTeam(views.APIView):
-    """
-    Create Team in the database with the request's body information
-
-    Parameter
-    ----------
-    request: HttpRequest
-        Request with Team data as JSON
-
-    Return
-    -------
-    response: Response
-        Response with the success of the request
-    """
 
     @staticmethod
     def post(request):
+        """
+        Create Team in the database with the request's body information
+        :param request: Request with Team data as JSON
+        :return: Response with the success of the request
+        """
         team = request.data.get('team')
         # Create the team from the request data
         serializer = TeamSerializer(data=team)
@@ -96,22 +72,15 @@ class CreateTeam(views.APIView):
 
 
 class UpdateTeam(views.APIView):
-    """
-    Update the Team info with the included information in the request
-
-    Parameter
-    ----------
-    request: HttpRequest
-        Request with Team data as JSON
-
-    Return
-    -------
-    response: Response
-        Response with the success of the request
-    """
 
     @staticmethod
     def put(request, team_id):
+        """
+        Update the Team info with the included information in the request
+        :param request: Request with Team data as JSON
+        :param team_id: Team numerical id
+        :return: Response with the success of the request
+        """
         saved_team = Team.objects.get(team_id=team_id)
         data = request.data.get('team')
         # Add info to team instance and save it in the database
@@ -122,22 +91,15 @@ class UpdateTeam(views.APIView):
 
 
 class ListPlayersByTeamId(views.APIView):
-    """
-    Get the player's list of selected team
-
-    Parameter
-    ----------
-    team_id: int
-        Team abbreviation
-
-    Return
-    -------
-    players: List
-        List of Players, each Player formatted as JSON
-    """
 
     @staticmethod
     def get(request, team_id):
+        """
+        Get the player's list of selected team
+        :param request:
+        :param team_id: Team numerical id
+        :return: List of Players, each Player formatted as JSON
+        """
         players = Player.objects.all().filter(team_id=team_id)
         # Transform Players objects into JSON format
         serializer = PlayerSerializer(players, many=True)
@@ -145,22 +107,15 @@ class ListPlayersByTeamId(views.APIView):
 
 
 class GetPlayerById(views.APIView):
-    """
-    Get player by id
-
-    Parameter
-    ----------
-    player_id: int
-        Player numerical id
-
-    Return
-    -------
-    player: Player
-        Player formatted as JSON
-    """
 
     @staticmethod
-    def get(self, player_id):
+    def get(request, player_id):
+        """
+
+        :param request:
+        :param player_id: Player numerical id
+        :return:
+        """
         player = Player.objects.get(player_id=player_id)
         # Transform Player object into JSON format
         serializer = PlayerSerializer(player)
@@ -168,22 +123,14 @@ class GetPlayerById(views.APIView):
 
 
 class CreatePlayer(views.APIView):
-    """
-    Create Player in the database with the request's body information
-
-    Parameter
-    ----------
-    request: HttpRequest
-        Request with Player data as JSON
-
-    Return
-    -------
-    response: Response
-        Response with the success of the request
-    """
 
     @staticmethod
     def post(request):
+        """
+        Create Player in the database with the request's body information
+        :param request: Request with Player data as JSON
+        :return: Response with the success of the request
+        """
         player = request.data.get('player')
         # Create the team from the request data
         serializer = PlayerSerializer(data=player)
@@ -193,22 +140,15 @@ class CreatePlayer(views.APIView):
 
 
 class UpdatePlayer(views.APIView):
-    """
-    Update the Player info with the included information in the request
-
-    Parameter
-    ----------
-    request: HttpRequest
-        Request with Player data as JSON
-
-    Return
-    -------
-    response: Response
-        Response with the success of the request
-    """
 
     @staticmethod
     def put(request, player_id):
+        """
+        Update the Player info with the included information in the request
+        :param request:
+        :param player_id: Player numerical id
+        :return: Response with the success of the request
+        """
         saved_player = Player.objects.get(player_id=player_id)
         data = request.data.get('player')
         # Add info to team instance and save it in the database
@@ -219,22 +159,14 @@ class UpdatePlayer(views.APIView):
 
 
 class GetGameById(views.APIView):
-    """
-    Get Game by id
-
-    Parameter
-    ----------
-    game_id: int
-        Game numerical id
-
-    Return
-    -------
-    game: Game
-        Game formatted as JSON
-    """
-
     @staticmethod
     def get(request, game_id):
+        """
+        Get Game by id
+        :param request:
+        :param game_id: Game numerical id
+        :return: Game formatted as JSON
+        """
         game = Game.objects.get(game_id=game_id)
         # Transform game object into JSON format
         serializer = GameSerializer(game)
@@ -242,22 +174,15 @@ class GetGameById(views.APIView):
 
 
 class ListGamesByLocalTeamId(views.APIView):
-    """
-    List Game by local team id
-
-    Parameter
-    ----------
-    local_team_id: int
-        Local Team numerical id
-
-    Return
-    -------
-    game: Game
-        Game formatted as JSON
-    """
 
     @staticmethod
     def get(request, local_team_id):
+        """
+        List Game by local team id
+        :param request:
+        :param local_team_id: Local Team numerical id
+        :return: Lists of Games, each one formatted as JSON
+        """
         games = Game.objects.filter(local_team=local_team_id)
         # Transform game object into JSON format
         serializer = GameSerializer(games, many=True)
@@ -265,22 +190,15 @@ class ListGamesByLocalTeamId(views.APIView):
 
 
 class ListGamesByVisitorTeamId(views.APIView):
-    """
-    List Game by visitor team id
-
-    Parameter
-    ----------
-    visitor_team_id: int
-        Visitor Team numerical id
-
-    Return
-    -------
-    game: Game
-        Game formatted as JSON
-    """
 
     @staticmethod
     def get(request, visitor_team_id):
+        """
+        List Game by visitor team id
+        :param request:
+        :param visitor_team_id: Visitor Team numerical id
+        :return: Lists of Games, each one formatted as JSON
+        """
         games = Game.objects.filter(visitor_team_id=visitor_team_id)
         # Transform game object into JSON format
         serializer = GameSerializer(games, many=True)
@@ -288,22 +206,15 @@ class ListGamesByVisitorTeamId(views.APIView):
 
 
 class ListGamesByWinnerTeamId(views.APIView):
-    """
-    List Game by winner team id
-
-    Parameter
-    ----------
-    winner_team_id: int
-        Winner Team numerical id
-
-    Return
-    -------
-    game: Game
-        Game formatted as JSON
-    """
 
     @staticmethod
     def get(request, winner_team_id):
+        """
+        List Game by winner team id
+        :param request:
+        :param winner_team_id: Winner Team numerical id
+        :return: Lists of Games, each one formatted as JSON
+        """
         games = Game.objects.filter(winner_team_id=winner_team_id)
         # Transform game object into JSON format
         serializer = GameSerializer(games, many=True)
@@ -311,17 +222,15 @@ class ListGamesByWinnerTeamId(views.APIView):
 
 
 class ListTeamGames(views.APIView):
-    """
-    List all Team's Games
-
-    Return
-    -------
-    games: List
-        List of Games, each Game formatted as JSON
-    """
 
     @staticmethod
     def get(request, team_id):
+        """
+        List all Team's Games
+        :param request:
+        :param team_id: Team numerical id
+        :return: List of Games, each Game formatted as JSON
+        """
         games = Game.objects.filter(Q(local_team=team_id) | Q(visitor_team=team_id))
         # Transform game objects into JSON format
         serializer = GameSerializer(games, many=True)
@@ -329,22 +238,14 @@ class ListTeamGames(views.APIView):
 
 
 class CreateGame(views.APIView):
-    """
-    Create Game in the database with the request's body information
-
-    Parameter
-    ----------
-    request: HttpRequest
-        Request with Game data as JSON
-
-    Return
-    -------
-    response: Response
-        Response with the success of the request
-    """
 
     @staticmethod
     def post(request):
+        """
+        Create Game in the database with the request's body information
+        :param request: Request with Game data as JSON
+        :return: Response with the success of the request
+        """
         game = request.data.get('game')
         # Create the team from the request data
         serializer = GameSerializer(data=game)
@@ -360,6 +261,12 @@ class UpdateGame(views.APIView):
 
     @staticmethod
     def put(request, game_id):
+        """
+        Update the Game info with the included information in the request
+        :param request: Request with Game data as JSON
+        :param game_id: Game string id
+        :return: Response with the success of the request
+        """
         saved_game = Game.objects.get(game_id=game_id)
         data = request.data.get('game')
         # Add info to team instance and save it in the database
