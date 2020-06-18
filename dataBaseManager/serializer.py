@@ -127,6 +127,8 @@ class PlayerSerializer(serializers.ModelSerializer):
         instance.blocks += validated_data.get('blocks', 0)
         instance.turnovers += validated_data.get('turnovers', 0)
         instance.personal_fouls += validated_data.get('personal_fouls', 0)
+        instance.played_minutes_per_game = (validated_data.get('played_minutes', 0) + instance.played_minutes) \
+                                           / (instance.played_games + validated_data.get('played_games', 0))
         instance.scored_points_per_game = (validated_data.get('scored_points', 0) + instance.scored_points) \
                                           / (instance.played_games + validated_data.get('played_games', 0))
         instance.field_goals_made_per_game = (validated_data.get('field_goals_made', 0) + instance.field_goals_made) \
