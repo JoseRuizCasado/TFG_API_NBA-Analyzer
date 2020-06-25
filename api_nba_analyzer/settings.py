@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'dataBaseManager',
     'advancedStatisticsCalculator',
-    'rest_framework_swagger'
+    'rest_framework_swagger',
+    'modelPredictor'
 ]
 
 MIDDLEWARE = [

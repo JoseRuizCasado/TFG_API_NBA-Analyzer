@@ -23,5 +23,6 @@ urlpatterns = [
     path('', schema_view),
     re_path('dbmanager/', include('dataBaseManager.urls')),
     re_path('gameanalyzer/', include('gameAnalyzer.urls')),
-    re_path('advancedStatisticsCalculator/', include('advancedStatisticsCalculator.urls'))
+    re_path('advancedStatisticsCalculator/', include('advancedStatisticsCalculator.urls')),
+    re_path('modelPredictor/', include('modelPredictor.urls')),
 ]

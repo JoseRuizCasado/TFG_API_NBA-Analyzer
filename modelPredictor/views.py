@@ -1,3 +1,10 @@
 from django.shortcuts import render
+from .apps import ModelpredictorConfig
+from rest_framework import views, response, status
 
-# Create your views here.
+
+class PredictGame(views.APIView):
+
+    @staticmethod
+    def get(request):
+        return response.Response(status=status.HTTP_200_OK)
