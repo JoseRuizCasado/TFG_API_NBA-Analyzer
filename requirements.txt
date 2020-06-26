@@ -8,3 +8,4 @@ python-dateutil==2.8.1
 requests==2.23.0
 matplotlib==3.2.1
 django-rest-swagger==2.2.0
+joblib~=0.15.1
