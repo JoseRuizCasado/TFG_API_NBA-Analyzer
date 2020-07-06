@@ -24,7 +24,10 @@ def player_off_rtg_floor_per(pts, mins, fgm, fga, fg3m, ftm, fta, ft_per, oreb, 
     q5 = 1.14 * ((tm_ast - ast) / tm_fgm)
     q12 = ((tm_ast / tm_min) * mins * 5 - ast) / ((tm_fgm / tm_min) * mins * 5 - fgm)
     qast = ((5 * mins) / tm_min) * q5 + (1 - ((5 * mins) / tm_min)) * q12
-    fg_part = fgm * (1 - 0.5 * ((pts - ftm) / (2 * fga))) * qast
+    if fga == 0:
+        fg_part = 0
+    else:
+        fg_part = fgm * (1 - 0.5 * ((pts - ftm) / (2 * fga))) * qast
 
     ast_part = 0.5 * (((tm_pts - tm_ftm) - (pts - ftm)) / (2 * (tm_fga - fga))) * ast
 
@@ -43,7 +46,11 @@ def player_off_rtg_floor_per(pts, mins, fgm, fga, fg3m, ftm, fta, ft_per, oreb, 
     missed_ft_part = ((1 - ft_per)**2) * 0.4 * fta
     possessions = scoring_possessions + missed_fg_part + missed_ft_part + tov
 
-    fg_pp_part = 2 * (fgm + 0.5 * fg3m) * (1 - 0.5 * ((pts - ftm) / (2 * fga)) * qast)
+    if fga == 0:
+        fg_pp_part = 0
+    else:
+        fg_pp_part = 2 * (fgm + 0.5 * fg3m) * (1 - 0.5 * ((pts - ftm) / (2 * fga)) * qast)
+
     ast_pp_part = 2 * ((tm_fgm - fgm + 0.5 * (tm_fg3m - fg3m)) / (tm_fgm - fgm)) * 0.5 \
                   * (((tm_pts - tm_ftm) - (pts - ftm)) / (2 * (tm_fga - fga))) * ast
     or_pp_part = oreb * tm_oreb_weight * tm_play_per * (tm_pts / (tm_fgm + (1 - (1 - tm_ft_per)**2) * 0.4 * tm_fta))
@@ -51,7 +58,13 @@ def player_off_rtg_floor_per(pts, mins, fgm, fga, fg3m, ftm, fta, ft_per, oreb, 
                        * (1 - (tm_oreb / team_scoring_poss(tm_fgm, tm_fta, tm_ft_per)) * tm_oreb_weight * tm_play_per))\
                       + or_pp_part
 
-    return (100 * (points_produced / possessions)), (scoring_possessions / possessions)
+    if possessions == 0:
+        offrtg = 0
+        floor = 0
+    else:
+        offrtg = 100 * (points_produced / possessions)
+        floor = scoring_possessions / possessions
+    return offrtg, floor
 
 
 def team_floor_per(fga, fgm, tov, fta, ftm, oreb, opp_dreb):
@@ -87,19 +100,31 @@ def team_pace(tm_min, fga, fgm, tov, fta, oreb, opp_dreb, opp_fga, opp_fgm, opp_
 
 
 def true_shooting_per(pts, fga, fta):
-    return pts / ((2 * fga) + (0.44 * fta))
+    if fta == 0:
+        return 0
+    else:
+        return pts / ((2 * fga) + (0.44 * fta))
 
 
 def effective_field_goals_per(two_fgm, three_fgm, fga):
-    return (two_fgm + (1.5 * three_fgm)) / fga
+    if fga == 0:
+        return 0
+    else:
+        return (two_fgm + (1.5 * three_fgm)) / fga
 
 
 def free_throws_att_rate(fta, fga):
-    return fta / fga
+    if fga == 0:
+        return 0
+    else:
+        return fta / fga
 
 
 def three_field_goals_att_rate(three_fga, fga):
-    return three_fga / fga
+    if fga == 0:
+        return 0
+    else:
+        return three_fga / fga
 
 
 def team_off_rebound_per(oreb, opp_dreb):
@@ -123,11 +148,17 @@ def team_blocks_per(blk, opp_fga, opp_3fga):
 
 
 def player_blocks_per(mins, blk, tm_min, opp_fga, opp_3fga):
-    return 100 * ((blk * (tm_min / 5)) / (mins * (opp_fga - opp_3fga)))
+    try:
+        return 100 * ((blk * (tm_min / 5)) / (mins * (opp_fga - opp_3fga)))
+    except:
+        return 0
 
 
 def turnovers_per(tov, fga, fta):
-    return 100 * (tov / (fga + 0.44 * fta + tov))
+    try:
+        return 100 * (tov / (fga + 0.44 * fta + tov))
+    except:
+        return 0
 
 
 def team_assists_per(ast, fgm):

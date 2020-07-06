@@ -132,6 +132,11 @@ class GetTeamPlayersStats(views.APIView):
         players_list = players_json['players']
 
         for player in players_list:
+            try:
+                free_throws_per = team_json['free_throws_made'] / team_json['free_throws_attempts']
+            except:
+                free_throws_per = 0
+
             player['OffRtg'], player['Floor%'] = player_off_rtg_floor_per(player['scored_points'],
                                                                           (player['played_minutes'] / 60),
                                                                           player['field_goals_made'],
@@ -139,8 +144,7 @@ class GetTeamPlayersStats(views.APIView):
                                                                           player['three_points_field_goals_made'],
                                                                           player['free_throws_made'],
                                                                           player['free_throws_attempts'],
-                                                                          player['free_throws_made']
-                                                                          / player['free_throws_attempts'],
+                                                                          free_throws_per,
                                                                           player['offensive_rebounds'],
                                                                           player['assists'],
                                                                           player['turnovers'],
@@ -151,8 +155,7 @@ class GetTeamPlayersStats(views.APIView):
                                                                           team_json['three_points_field_goals_made'],
                                                                           team_json['free_throws_made'],
                                                                           team_json['free_throws_attempts'],
-                                                                          team_json['free_throws_made']
-                                                                          / team_json['free_throws_attempts'],
+                                                                          free_throws_per,
                                                                           team_json['offensive_rebounds'],
                                                                           team_json['assists'],
                                                                           team_json['turnovers'],
