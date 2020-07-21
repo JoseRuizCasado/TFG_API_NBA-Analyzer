@@ -8,3 +8,4 @@ class ModelpredictorConfig(AppConfig):
     linear_support_vector_classifier = joblib.load('modelPredictor/machine-learnig-model/linear-svc.sav')
     support_vector_classifier_linear_kernel = joblib.load('modelPredictor/machine-learnig-model/svc-linear-kernel.sav')
     voting_classifier = joblib.load('modelPredictor/machine-learnig-model/voting-classifier.sav')
+    prediction_model = joblib.load('modelPredictor/machine-learnig-model/prediction_model.sav')
