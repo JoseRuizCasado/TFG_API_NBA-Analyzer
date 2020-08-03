@@ -1,8 +1,6 @@
 from django.db import models
 
 
-# Create your models here.
-
 class Team(models.Model):
     team_id = models.IntegerField(primary_key=True, null=False)
     name = models.CharField(max_length=255, null=False)
@@ -170,16 +168,3 @@ class Game(models.Model):
 
     def __str__(self):
         return f'{self.visitor_team} VS@ {self.local_team}'
-
-
-class DefendInfo(models.Model):
-    auto_increment_id = models.AutoField(primary_key=True)
-    shooter_id = models.IntegerField(null=False)
-    defender_id = models.IntegerField(null=False)
-    defend_success = models.BooleanField(null=False)
-
-    def __str__(self):
-        if self.defend_success:
-            return f'{self.shooter_id} miss shot defended by {self.defender_id}'
-        else:
-            return f'{self.shooter_id} made shot defended by {self.defender_id}'

@@ -60,15 +60,3 @@ class PredictGame(views.APIView):
 
         return response.Response(data={'prediction': prediction}, status=status.HTTP_200_OK)
 
-class GetDefendInfo(views.APIView):
-
-    @staticmethod
-    def get(request, player_id, player_position):
-        """
-
-        :param request:
-        :param player_id: Player id to extract defend info
-        :param player_position: Player position.
-        :return:
-        """
-        pass

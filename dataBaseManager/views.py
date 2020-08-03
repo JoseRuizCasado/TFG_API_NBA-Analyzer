@@ -1,10 +1,9 @@
 from django.db.models import Q
-from rest_framework import views, response
-from .models import Team, Player, Game, DefendInfo
-from .serializer import TeamSerializer, PlayerSerializer, GameSerializer, DefendInfoSerializer
-
-
-# Create your views here.
+from rest_framework import views, response, status
+from .models import Team, Player, Game
+from .serializer import TeamSerializer, PlayerSerializer, GameSerializer
+import pandas as pd
+from .apps import DatabasemanagerConfig
 
 
 class ListTeams(views.APIView):
@@ -276,13 +275,118 @@ class UpdateGame(views.APIView):
         return response.Response({'success': f'Game {saved_game.game_id} updated successfully'})
 
 
-class CreateDefendInfo(views.APIView):
+class GetDefendInfo(views.APIView):
 
     @staticmethod
-    def post(request):
-        data = request.data.get('data')
-        serializer = DefendInfoSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            saved_data = serializer.save()
-        return response.Response({'success': f'Shooter {saved_data.shooter_id} and defender {saved_data.defender_id} '
-                                             f'info created successfully'})
+    def extract_defend_info(player_defend_data, position):
+        player_cluster0 = player_defend_data[player_defend_data['Shooter Cluster'] == 0]
+        count0 = player_cluster0.groupby('Defend Success')['Defend Success'].count()
+        if count0.shape[0] < 2:
+            success_cluster0 = player_cluster0[player_cluster0['Defend Success'] == 0]
+            if success_cluster0.shape[0] == 0:
+                count0 = count0.append(pd.Series([0], index=[0]))
+            else:
+                count0 = count0.append(pd.Series([0], index=[1]))
+
+        count0_json = {
+            'failure': count0[0],
+            'success': count0[1]
+        }
+        player_cluster1 = player_defend_data[player_defend_data['Shooter Cluster'] == 1]
+        count1 = player_cluster1.groupby('Defend Success')['Defend Success'].count()
+        if count1.shape[0] < 2:
+            success_cluster1 = player_cluster1[player_cluster1['Defend Success'] == 0]
+            if success_cluster1.shape[0] == 0:
+                count1 = count1.append(pd.Series([0], index=[0]))
+            else:
+                count1 = count1.append(pd.Series([0], index=[1]))
+
+        count1_json = {
+            'failure': count1[0],
+            'success': count1[1]
+        }
+        player_cluster2 = player_defend_data[player_defend_data['Shooter Cluster'] == 2]
+        count2 = player_cluster2.groupby('Defend Success')['Defend Success'].count()
+        if count2.shape[0] < 2:
+            success_cluster2 = player_cluster2[player_cluster2['Defend Success'] == 0]
+            if success_cluster2.shape[0] == 0:
+                count2 = count2.append(pd.Series([0], index=[0]))
+            else:
+                count2 = count2.append(pd.Series([0], index=[1]))
+
+        count2_json = {
+            'failure': count2[0],
+            'success': count2[1]
+        }
+        player_cluster3 = player_defend_data[player_defend_data['Shooter Cluster'] == 3]
+        count3 = player_cluster3.groupby('Defend Success')['Defend Success'].count()
+        if count3.shape[0] < 2:
+            success_cluster3 = player_cluster3[player_cluster3['Defend Success'] == 0]
+            if success_cluster3.shape[0] == 0:
+                count3 = count3.append(pd.Series([0], index=[0]))
+            else:
+                count3 = count3.append(pd.Series([0], index=[1]))
+
+        count3_json = {
+            'failure': count3[0],
+            'success': count3[1]
+        }
+
+        player_cluster4 = player_defend_data[player_defend_data['Shooter Cluster'] == 4]
+        count4 = player_cluster4.groupby('Defend Success')['Defend Success'].count()
+        if count4.shape[0] < 2:
+            success_cluster4 = player_cluster4[player_cluster4['Defend Success'] == 0]
+            if success_cluster4.shape[0] == 0:
+                count4 = count4.append(pd.Series([0], index=[0]))
+            else:
+                count4 = count4.append(pd.Series([0], index=[1]))
+
+        count4_json = {
+            'failure': count4[0],
+            'success': count4[1]
+        }
+        data_json = {
+            'Cluster 0': count0_json,
+            'Cluster 1': count1_json,
+            'Cluster 2': count2_json,
+            'Cluster 3': count3_json,
+            'Cluster 4': count4_json
+        }
+        if position in ['SG']:
+            player_cluster5 = player_defend_data[player_defend_data['Shooter Cluster'] == 5]
+            count5 = player_cluster5.groupby('Defend Success')['Defend Success'].count()
+            if count5.shape[0] < 2:
+                success_cluster5 = player_cluster5[player_cluster5['Defend Success'] == 0]
+                if success_cluster5.shape[0] == 0:
+                    count5 = count5.append(pd.Series([0], index=[0]))
+                else:
+                    count5 = count5.append(pd.Series([0], index=[1]))
+            data_json['Cluster 5'] = {
+                'failure': count5[0],
+                'success': count5[1]
+            }
+
+        return data_json
+
+    @staticmethod
+    def get(request, player_id, player_position):
+        """
+
+        :param request:
+        :param player_id: Player integer identifier to extract defend info
+        :param player_position: Player position as string.
+        :return:
+        """
+
+        defend_data = DatabasemanagerConfig.defend_data
+        player_defend_data = defend_data[defend_data['Defender ID'] == player_id]
+        player_position = player_position.upper()
+        data_json = GetDefendInfo.extract_defend_info(
+            player_defend_data[player_defend_data['Shooter position'] == player_position],
+            player_position)
+
+        return response.Response(data=data_json, status=status.HTTP_200_OK)
+
+
+
+
