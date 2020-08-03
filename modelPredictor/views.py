@@ -52,10 +52,23 @@ class PredictGame(views.APIView):
         scaler.fit(data_to_predict)
         X = scaler.transform(data_to_predict)
 
-        predicted_class = ModelpredictorConfig.voting_classifier.predict(X=X)
+        predicted_class = ModelpredictorConfig.prediction_model.predict(X=X)
         if predicted_class:
             prediction = 'Win'
         else:
             prediction = 'Lose'
 
         return response.Response(data={'prediction': prediction}, status=status.HTTP_200_OK)
+
+class GetDefendInfo(views.APIView):
+
+    @staticmethod
+    def get(request, player_id, player_position):
+        """
+
+        :param request:
+        :param player_id: Player id to extract defend info
+        :param player_position: Player position.
+        :return:
+        """
+        pass

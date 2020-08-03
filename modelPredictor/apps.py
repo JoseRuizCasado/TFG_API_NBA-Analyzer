@@ -4,8 +4,9 @@ import joblib
 
 class ModelpredictorConfig(AppConfig):
     name = 'modelPredictor'
-    logistic_regression_classifier = joblib.load('modelPredictor/machine-learnig-model/lr-lbfgs.sav')
-    linear_support_vector_classifier = joblib.load('modelPredictor/machine-learnig-model/linear-svc.sav')
-    support_vector_classifier_linear_kernel = joblib.load('modelPredictor/machine-learnig-model/svc-linear-kernel.sav')
-    voting_classifier = joblib.load('modelPredictor/machine-learnig-model/voting-classifier.sav')
     prediction_model = joblib.load('modelPredictor/machine-learnig-model/prediction_model.sav')
+    point_guards_kmeans = joblib.load('modelPredictor/machine-learnig-model/kmeans_pg.sav')
+    shooting_guards_kmeans = joblib.load('modelPredictor/machine-learnig-model/kmeans_sg.sav')
+    small_forwards_kmeans = joblib.load('modelPredictor/machine-learnig-model/kmeans_sf.sav')
+    power_forwards_kmeans = joblib.load('modelPredictor/machine-learnig-model/kmeans_pf.sav')
+    centers_kmeans = joblib.load('modelPredictor/machine-learnig-model/kmeans_c.sav')

@@ -1,7 +1,7 @@
 from django.db.models import Q
 from rest_framework import views, response
-from .models import Team, Player, Game
-from .serializer import TeamSerializer, PlayerSerializer, GameSerializer
+from .models import Team, Player, Game, DefendInfo
+from .serializer import TeamSerializer, PlayerSerializer, GameSerializer, DefendInfoSerializer
 
 
 # Create your views here.
@@ -274,3 +274,15 @@ class UpdateGame(views.APIView):
         if serializer.is_valid(raise_exception=True):
             saved_game = serializer.save()
         return response.Response({'success': f'Game {saved_game.game_id} updated successfully'})
+
+
+class CreateDefendInfo(views.APIView):
+
+    @staticmethod
+    def post(request):
+        data = request.data.get('data')
+        serializer = DefendInfoSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            saved_data = serializer.save()
+        return response.Response({'success': f'Shooter {saved_data.shooter_id} and defender {saved_data.defender_id} '
+                                             f'info created successfully'})
