@@ -1,4 +1,4 @@
-from rest_framework import views, response
+from rest_framework import views, response, status
 import requests
 from .gameInfoExtractor import extract_game_info
 
@@ -83,17 +83,17 @@ class AnalyzeGameById(views.APIView):
         update_player_url = 'http://127.0.0.1:8000/dbmanager/update-player/'
 
         # Save home Team
-        requests.put(url=update_team_url+f'{game_json["local_team"]}', json={'team': home_team_statistics})
+        requests.put(url=update_team_url + f'{game_json["local_team"]}', json={'team': home_team_statistics})
         # Save visitor Team
-        requests.put(url=update_team_url+f'{game_json["visitor_team"]}', json={'team': visitor_team_statistics})
+        requests.put(url=update_team_url + f'{game_json["visitor_team"]}', json={'team': visitor_team_statistics})
 
         # Save home Team Players
         for home_player in home_team_statistics['players']:
-            requests.put(url=update_player_url+f'{home_player["player_id"]}', json={'player': home_player})
+            requests.put(url=update_player_url + f'{home_player["player_id"]}', json={'player': home_player})
         # Save visitor Team Players
         for visitor_player in visitor_team_statistics['players']:
             requests.put(url=update_player_url + f'{visitor_player["player_id"]}', json={'player': visitor_player})
 
-        return response.Response({'success': f'Game {game_json["game_id"]} files analyzed successfully',
-                                  'local_team': home_team_statistics,
-                                  'visitor_team': visitor_team_statistics})
+        return response.Response(data={'success': f'Game {game_json["game_id"]} files analyzed successfully',
+                                       'local_team': home_team_statistics,
+                                       'visitor_team': visitor_team_statistics}, status=status.HTTP_200_OK)

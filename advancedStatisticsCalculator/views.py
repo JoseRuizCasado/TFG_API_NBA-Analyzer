@@ -1,4 +1,4 @@
-from rest_framework import views, response
+from rest_framework import views, response, status
 import requests
 from .StatsCalculator import *
 
@@ -63,7 +63,7 @@ class GetTeamStats(views.APIView):
                                             team_json['conceded_offensive_rebounds'],
                                             team_json['defensive_rebounds'])
 
-        return response.Response({'team': team_json})
+        return response.Response(data={'team': team_json}, status=status.HTTP_200_OK)
 
 
 class GetTeamPlayersStats(views.APIView):
@@ -213,4 +213,4 @@ class GetTeamPlayersStats(views.APIView):
                                        team_json['free_throws_attempts'], team_json['turnovers'])
 
         team_json['players'] = players_list
-        return response.Response({'team': team_json})
+        return response.Response(data={'team': team_json}, status=status.HTTP_200_OK)

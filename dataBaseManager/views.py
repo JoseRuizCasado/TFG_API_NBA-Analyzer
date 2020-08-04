@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Sum
 from rest_framework import views, response, status
 from .models import Team, Player, Game
 from .serializer import TeamSerializer, PlayerSerializer, GameSerializer
@@ -18,13 +18,13 @@ class ListTeams(views.APIView):
         teams = Team.objects.all()
         # Transform team objects into JSON format
         serializer = TeamSerializer(teams, many=True)
-        return response.Response({'teams': serializer.data})
+        return response.Response(data={'teams': serializer.data}, status=status.HTTP_200_OK)
 
 
 class GetTeamById(views.APIView):
 
     @staticmethod
-    def get(request, team_id, format=None):
+    def get(request, team_id):
         """
         Get the Team with selected id
         :param request:
@@ -34,13 +34,13 @@ class GetTeamById(views.APIView):
         team = Team.objects.get(team_id=team_id)
         # Transform team object into JSON format
         serializer = TeamSerializer(team)
-        return response.Response({'team': serializer.data})
+        return response.Response(data={'team': serializer.data}, status=status.HTTP_200_OK)
 
 
 class GetTeamByAbbreviation(views.APIView):
 
     @staticmethod
-    def get(request, team_abbreviation, format=None):
+    def get(request, team_abbreviation):
         """
         Get the Team with selected abbreviation
         :param request:
@@ -50,7 +50,7 @@ class GetTeamByAbbreviation(views.APIView):
         team = Team.objects.get(abbreviation=team_abbreviation)
         # Transform team object into JSON format
         serializer = TeamSerializer(team)
-        return response.Response({'team': serializer.data})
+        return response.Response(data={'team': serializer.data}, status=status.HTTP_200_OK)
 
 
 class CreateTeam(views.APIView):
@@ -67,7 +67,8 @@ class CreateTeam(views.APIView):
         serializer = TeamSerializer(data=team)
         if serializer.is_valid(raise_exception=True):
             saved_team = serializer.save()
-        return response.Response({'success': f'Team {saved_team.team_id} created successfully'})
+        return response.Response(data={'success': f'Team {saved_team.team_id} created successfully'},
+                                 status=status.HTTP_200_OK)
 
 
 class UpdateTeam(views.APIView):
@@ -86,7 +87,8 @@ class UpdateTeam(views.APIView):
         serializer = TeamSerializer(instance=saved_team, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             saved_team = serializer.save()
-        return response.Response({'success': f'Team {saved_team.team_id} updated successfully'})
+        return response.Response(data={'success': f'Team {saved_team.team_id} updated successfully'},
+                                 status=status.HTTP_200_OK)
 
 
 class ListPlayersByTeamId(views.APIView):
@@ -102,7 +104,7 @@ class ListPlayersByTeamId(views.APIView):
         players = Player.objects.all().filter(team_id=team_id)
         # Transform Players objects into JSON format
         serializer = PlayerSerializer(players, many=True)
-        return response.Response({'players': serializer.data})
+        return response.Response(data={'players': serializer.data}, status=status.HTTP_200_OK)
 
 
 class GetPlayerById(views.APIView):
@@ -118,7 +120,7 @@ class GetPlayerById(views.APIView):
         player = Player.objects.get(player_id=player_id)
         # Transform Player object into JSON format
         serializer = PlayerSerializer(player)
-        return response.Response({'player': serializer.data})
+        return response.Response(data={'player': serializer.data}, status=status.HTTP_200_OK)
 
 
 class CreatePlayer(views.APIView):
@@ -135,7 +137,8 @@ class CreatePlayer(views.APIView):
         serializer = PlayerSerializer(data=player)
         if serializer.is_valid(raise_exception=True):
             saved_player = serializer.save()
-        return response.Response({'success': f'Player {saved_player.player_id} created successfully'})
+        return response.Response(data={'success': f'Player {saved_player.player_id} created successfully'},
+                                 status=status.HTTP_200_OK)
 
 
 class UpdatePlayer(views.APIView):
@@ -154,7 +157,8 @@ class UpdatePlayer(views.APIView):
         serializer = PlayerSerializer(instance=saved_player, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             saved_player = serializer.save()
-        return response.Response({'success': f'Player {saved_player.player_id} updated successfully'})
+        return response.Response(data={'success': f'Player {saved_player.player_id} updated successfully'},
+                                 status=status.HTTP_200_OK)
 
 
 class GetGameById(views.APIView):
@@ -169,7 +173,7 @@ class GetGameById(views.APIView):
         game = Game.objects.get(game_id=game_id)
         # Transform game object into JSON format
         serializer = GameSerializer(game)
-        return response.Response({'game': serializer.data})
+        return response.Response(data={'game': serializer.data}, status=status.HTTP_200_OK)
 
 
 class ListGamesByLocalTeamId(views.APIView):
@@ -185,7 +189,7 @@ class ListGamesByLocalTeamId(views.APIView):
         games = Game.objects.filter(local_team=local_team_id)
         # Transform game object into JSON format
         serializer = GameSerializer(games, many=True)
-        return response.Response({'games': serializer.data})
+        return response.Response(data={'games': serializer.data}, status=status.HTTP_200_OK)
 
 
 class ListGamesByVisitorTeamId(views.APIView):
@@ -201,7 +205,7 @@ class ListGamesByVisitorTeamId(views.APIView):
         games = Game.objects.filter(visitor_team_id=visitor_team_id)
         # Transform game object into JSON format
         serializer = GameSerializer(games, many=True)
-        return response.Response({'games': serializer.data})
+        return response.Response(data={'games': serializer.data}, status=status.HTTP_200_OK)
 
 
 class ListGamesByWinnerTeamId(views.APIView):
@@ -217,7 +221,7 @@ class ListGamesByWinnerTeamId(views.APIView):
         games = Game.objects.filter(winner_team_id=winner_team_id)
         # Transform game object into JSON format
         serializer = GameSerializer(games, many=True)
-        return response.Response({'games': serializer.data})
+        return response.Response(data={'games': serializer.data}, status=status.HTTP_200_OK)
 
 
 class ListTeamGames(views.APIView):
@@ -233,7 +237,7 @@ class ListTeamGames(views.APIView):
         games = Game.objects.filter(Q(local_team=team_id) | Q(visitor_team=team_id))
         # Transform game objects into JSON format
         serializer = GameSerializer(games, many=True)
-        return response.Response({'games': serializer.data})
+        return response.Response(data={'games': serializer.data}, status=status.HTTP_200_OK)
 
 
 class CreateGame(views.APIView):
@@ -250,7 +254,8 @@ class CreateGame(views.APIView):
         serializer = GameSerializer(data=game)
         if serializer.is_valid(raise_exception=True):
             saved_game = serializer.save()
-        return response.Response({'success': f'Game {saved_game.game_id} created successfully'})
+        return response.Response(data={'success': f'Game {saved_game.game_id} created successfully'},
+                                 status=status.HTTP_200_OK)
 
 
 class UpdateGame(views.APIView):
@@ -272,74 +277,92 @@ class UpdateGame(views.APIView):
         serializer = GameSerializer(instance=saved_game, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             saved_game = serializer.save()
-        return response.Response({'success': f'Game {saved_game.game_id} updated successfully'})
+        return response.Response(data={'success': f'Game {saved_game.game_id} updated successfully'},
+                                 status=status.HTTP_200_OK)
 
 
 class GetDefendInfo(views.APIView):
 
     @staticmethod
     def extract_defend_info(player_defend_data, position):
-        player_cluster0 = player_defend_data[player_defend_data['Shooter Cluster'] == 0]
-        count0 = player_cluster0.groupby('Defend Success')['Defend Success'].count()
+        shooter_cluster = 'Shooter Cluster'
+        defend_success = 'Defend Success'
+        player_cluster0 = player_defend_data[player_defend_data[shooter_cluster] == 0]
+        count0 = player_cluster0.groupby(defend_success)[defend_success].count()
         if count0.shape[0] < 2:
-            success_cluster0 = player_cluster0[player_cluster0['Defend Success'] == 0]
-            if success_cluster0.shape[0] == 0:
+            failure_cluster0 = player_cluster0[player_cluster0[defend_success] == 0]
+            success_cluster0 = player_cluster0[player_cluster0[defend_success] == 1]
+            if failure_cluster0.shape[0] == 0:
                 count0 = count0.append(pd.Series([0], index=[0]))
-            else:
+            elif success_cluster0.shape[0] == 0:
                 count0 = count0.append(pd.Series([0], index=[1]))
+            else:
+                count0 = count0.append(pd.Series([0, 0], index=[0, 1]))
 
         count0_json = {
             'failure': count0[0],
             'success': count0[1]
         }
-        player_cluster1 = player_defend_data[player_defend_data['Shooter Cluster'] == 1]
-        count1 = player_cluster1.groupby('Defend Success')['Defend Success'].count()
+        player_cluster1 = player_defend_data[player_defend_data[shooter_cluster] == 1]
+        count1 = player_cluster1.groupby(defend_success)[defend_success].count()
         if count1.shape[0] < 2:
-            success_cluster1 = player_cluster1[player_cluster1['Defend Success'] == 0]
-            if success_cluster1.shape[0] == 0:
+            failure_cluster1 = player_cluster1[player_cluster1[defend_success] == 0]
+            success_cluster1 = player_cluster1[player_cluster1[defend_success] == 1]
+            if failure_cluster1.shape[0] == 0:
                 count1 = count1.append(pd.Series([0], index=[0]))
-            else:
+            elif success_cluster1.shape[0] == 0:
                 count1 = count1.append(pd.Series([0], index=[1]))
+            else:
+                count1 = count1.append(pd.Series([0, 0], index=[0, 1]))
 
         count1_json = {
             'failure': count1[0],
             'success': count1[1]
         }
-        player_cluster2 = player_defend_data[player_defend_data['Shooter Cluster'] == 2]
-        count2 = player_cluster2.groupby('Defend Success')['Defend Success'].count()
+        player_cluster2 = player_defend_data[player_defend_data[shooter_cluster] == 2]
+        count2 = player_cluster2.groupby(defend_success)[defend_success].count()
         if count2.shape[0] < 2:
-            success_cluster2 = player_cluster2[player_cluster2['Defend Success'] == 0]
-            if success_cluster2.shape[0] == 0:
+            failure_cluster2 = player_cluster2[player_cluster2[defend_success] == 0]
+            success_cluster2 = player_cluster2[player_cluster2[defend_success] == 1]
+            if failure_cluster2.shape[0] == 0:
                 count2 = count2.append(pd.Series([0], index=[0]))
-            else:
+            elif success_cluster2.shape[0] == 0:
                 count2 = count2.append(pd.Series([0], index=[1]))
+            else:
+                count2 = count2.append(pd.Series([0, 0], index=[0, 1]))
 
         count2_json = {
             'failure': count2[0],
             'success': count2[1]
         }
-        player_cluster3 = player_defend_data[player_defend_data['Shooter Cluster'] == 3]
-        count3 = player_cluster3.groupby('Defend Success')['Defend Success'].count()
+        player_cluster3 = player_defend_data[player_defend_data[shooter_cluster] == 3]
+        count3 = player_cluster3.groupby(defend_success)[defend_success].count()
         if count3.shape[0] < 2:
-            success_cluster3 = player_cluster3[player_cluster3['Defend Success'] == 0]
-            if success_cluster3.shape[0] == 0:
+            failure_cluster3 = player_cluster3[player_cluster3[defend_success] == 0]
+            success_cluster3 = player_cluster3[player_cluster3[defend_success] == 1]
+            if failure_cluster3.shape[0] == 0:
                 count3 = count3.append(pd.Series([0], index=[0]))
-            else:
+            elif success_cluster3.shape[0] == 0:
                 count3 = count3.append(pd.Series([0], index=[1]))
+            else:
+                count3 = count3.append(pd.Series([0, 0], index=[1, 0]))
 
         count3_json = {
             'failure': count3[0],
             'success': count3[1]
         }
 
-        player_cluster4 = player_defend_data[player_defend_data['Shooter Cluster'] == 4]
-        count4 = player_cluster4.groupby('Defend Success')['Defend Success'].count()
+        player_cluster4 = player_defend_data[player_defend_data[shooter_cluster] == 4]
+        count4 = player_cluster4.groupby(defend_success)[defend_success].count()
         if count4.shape[0] < 2:
-            success_cluster4 = player_cluster4[player_cluster4['Defend Success'] == 0]
-            if success_cluster4.shape[0] == 0:
+            failure_cluster4 = player_cluster4[player_cluster4[defend_success] == 0]
+            success_cluster4 = player_cluster4[player_cluster4[defend_success] == 1]
+            if failure_cluster4.shape[0] == 0:
                 count4 = count4.append(pd.Series([0], index=[0]))
-            else:
+            elif success_cluster4.shape[0] == 0:
                 count4 = count4.append(pd.Series([0], index=[1]))
+            else:
+                count4 = count4.append(pd.Series([0, 0], index=[0, 1]))
 
         count4_json = {
             'failure': count4[0],
@@ -353,14 +376,17 @@ class GetDefendInfo(views.APIView):
             'Cluster 4': count4_json
         }
         if position in ['SG']:
-            player_cluster5 = player_defend_data[player_defend_data['Shooter Cluster'] == 5]
-            count5 = player_cluster5.groupby('Defend Success')['Defend Success'].count()
+            player_cluster5 = player_defend_data[player_defend_data[shooter_cluster] == 5]
+            count5 = player_cluster5.groupby(defend_success)[defend_success].count()
             if count5.shape[0] < 2:
-                success_cluster5 = player_cluster5[player_cluster5['Defend Success'] == 0]
-                if success_cluster5.shape[0] == 0:
+                failure_cluster5 = player_cluster5[player_cluster5[defend_success] == 0]
+                success_cluster5 = player_cluster5[player_cluster5[defend_success] == 1]
+                if failure_cluster5.shape[0] == 0:
+                    count5 = count5.append(pd.Series([0], index=[0]))
+                elif success_cluster5.shape[0] == 0:
                     count5 = count5.append(pd.Series([0], index=[0]))
                 else:
-                    count5 = count5.append(pd.Series([0], index=[1]))
+                    count5 = count5.append(pd.Series([0, 1], index=[0, 1]))
             data_json['Cluster 5'] = {
                 'failure': count5[0],
                 'success': count5[1]
@@ -388,5 +414,23 @@ class GetDefendInfo(views.APIView):
         return response.Response(data=data_json, status=status.HTTP_200_OK)
 
 
+class GetTeamPointsPerPositions(views.APIView):
 
+    @staticmethod
+    def get(request, team_id):
+        """
+        Get the team score distributed by the positions of the players.
+        :param request:
+        :param team_id: Team integer identifier
+        :return:
+        """
 
+        points_distribution = {
+            'PG': Player.objects.filter(team_id=team_id, position='PG').aggregate(Sum('scored_points'))['scored_points__sum'],
+            'SG': Player.objects.filter(team_id=team_id, position='SG').aggregate(Sum('scored_points'))['scored_points__sum'],
+            'SF': Player.objects.filter(team_id=team_id, position='SF').aggregate(Sum('scored_points'))['scored_points__sum'],
+            'PF': Player.objects.filter(team_id=team_id, position='PF').aggregate(Sum('scored_points'))['scored_points__sum'],
+            'C': Player.objects.filter(team_id=team_id, position='C').aggregate(Sum('scored_points'))['scored_points__sum']
+        }
+
+        return response.Response(data=points_distribution, status=status.HTTP_200_OK)

@@ -21,7 +21,9 @@ urlpatterns = [
     path('team-games/<int:team_id>', ListTeamGames.as_view(), name='team-games'),
     path('create-game/', CreateGame.as_view(), name='create-game'),
     path('update-game/<str:game_id>', UpdateGame.as_view(), name='update-game'),
-    path('get-defend-info/<int:player_id>/<str:player_position>', GetDefendInfo.as_view(), name='get-defend-info')
+    path('get-defend-info/<int:player_id>/<str:player_position>', GetDefendInfo.as_view(), name='get-defend-info'),
+    path('get-team-distributed-points/<int:team_id>', GetTeamPointsPerPositions.as_view(),
+         name='get-team-distributed-points')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
