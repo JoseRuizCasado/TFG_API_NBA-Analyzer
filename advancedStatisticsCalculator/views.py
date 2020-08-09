@@ -14,6 +14,7 @@ class GetTeamStats(views.APIView):
         :return: Team stats formatted as JSON
         """
         # Get Team stats stored in database
+        print(f'TEAM REQUEST: {team_id}')
         team_json = requests.get(url=f'http://127.0.0.1:8000/dbmanager/team/{team_id}').json()['team']
         # Calculate advanced stats with stats from de database
         team_json['TmOffRtg'] = team_off_rtg(team_json['scored_points'], team_json['field_goals_attempts'],
