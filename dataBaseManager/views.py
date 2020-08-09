@@ -426,11 +426,76 @@ class GetTeamPointsPerPositions(views.APIView):
         """
 
         points_distribution = {
-            'PG': Player.objects.filter(team_id=team_id, position='PG').aggregate(Sum('scored_points'))['scored_points__sum'],
-            'SG': Player.objects.filter(team_id=team_id, position='SG').aggregate(Sum('scored_points'))['scored_points__sum'],
-            'SF': Player.objects.filter(team_id=team_id, position='SF').aggregate(Sum('scored_points'))['scored_points__sum'],
-            'PF': Player.objects.filter(team_id=team_id, position='PF').aggregate(Sum('scored_points'))['scored_points__sum'],
-            'C': Player.objects.filter(team_id=team_id, position='C').aggregate(Sum('scored_points'))['scored_points__sum']
+            'PG': Player.objects.filter(team_id=team_id, position='PG').aggregate(Sum('scored_points'))[
+                'scored_points__sum'],
+            'SG': Player.objects.filter(team_id=team_id, position='SG').aggregate(Sum('scored_points'))[
+                'scored_points__sum'],
+            'SF': Player.objects.filter(team_id=team_id, position='SF').aggregate(Sum('scored_points'))[
+                'scored_points__sum'],
+            'PF': Player.objects.filter(team_id=team_id, position='PF').aggregate(Sum('scored_points'))[
+                'scored_points__sum'],
+            'C': Player.objects.filter(team_id=team_id, position='C').aggregate(Sum('scored_points'))[
+                'scored_points__sum']
         }
 
-        return response.Response(data=points_distribution, status=status.HTTP_200_OK)
+        starters = Player.objects.filter(team_id=team_id, is_starter=True)
+
+        starters_json = {}
+        pg = False
+        sg = False
+        sf = False
+        pf = False
+        c = False
+        for player in starters:
+            if player.position == 'PG':
+                if not pg:
+                    pg = True
+                    starters_json['PG_Starter'] = player.scored_points
+                    starters_json['PG_Subs'] = abs(points_distribution['PG'] - player.scored_points)
+
+                else:
+                    starters_json['SG_Starter'] = player.scored_points
+                    starters_json['SG_Subs'] = abs(points_distribution['SG'] - player.scored_points)
+
+            if player.position == 'SG':
+                if not sg:
+                    sg = True
+                    starters_json['SG_Starter'] = player.scored_points
+                    starters_json['SG_Subs'] = abs(points_distribution['SG'] - player.scored_points)
+
+                else:
+                    starters_json['SF_Starter'] = player.scored_points
+                    starters_json['SF_Subs'] = abs(points_distribution['SF'] - player.scored_points)
+
+            if player.position == 'SF':
+                if not sf:
+                    sf = True
+                    starters_json['SF_Starter'] = player.scored_points
+                    starters_json['SF_Subs'] = abs(points_distribution['SF'] - player.scored_points)
+
+                else:
+                    starters_json['PF_Starter'] = player.scored_points
+                    starters_json['PF_Subs'] = abs(points_distribution['PF'] - player.scored_points)
+
+            if player.position == 'PF':
+                if not pf:
+                    pf = True
+                    starters_json['PF_Starter'] = player.scored_points
+                    starters_json['PF_Subs'] = abs(points_distribution['PF'] - player.scored_points)
+
+                else:
+                    starters_json['C_Starter'] = player.scored_points
+                    starters_json['C_Subs'] = abs(points_distribution['C'] - player.scored_points)
+
+            if player.position == 'C':
+                if not c:
+                    c = True
+                    starters_json['C_Starter'] = player.scored_points
+                    starters_json['C_Subs'] = abs(points_distribution['C'] - player.scored_points)
+
+                else:
+                    starters_json['PF_Starter'] = player.scored_points
+                    starters_json['PF_Subs'] = abs(points_distribution['PF'] - player.scored_points)
+
+        return response.Response(data={'points_distribution': points_distribution,
+                                       'starters_sub_distribution':  starters_json}, status=status.HTTP_200_OK)
