@@ -373,7 +373,11 @@ class GetDefendInfo(views.APIView):
             'Cluster 1': count1_json,
             'Cluster 2': count2_json,
             'Cluster 3': count3_json,
-            'Cluster 4': count4_json
+            'Cluster 4': count4_json,
+            'Cluster 5': {
+                'failure': 0,
+                'success': 0
+            }
         }
         if position in ['SG']:
             player_cluster5 = player_defend_data[player_defend_data[shooter_cluster] == 5]
@@ -395,6 +399,62 @@ class GetDefendInfo(views.APIView):
         return data_json
 
     @staticmethod
+    def extract_cluster_mean_defend_data(defend_data, position, cluster):
+        shooter_cluster = 'Shooter Cluster'
+        defender_cluster = 'Defender Cluster'
+        defend_success = 'Defend Success'
+        cluster_mean_json = {
+            'Cluster 0': {},
+            'Cluster 1': {},
+            'Cluster 2': {},
+            'Cluster 3': {},
+            'Cluster 4': {},
+            'Cluster 5': {
+                'failure': 0,
+                'success': 0
+            }
+        }
+
+        if cluster != -1:
+            cluster_defend_data = defend_data[defend_data[defender_cluster] == cluster]
+            cluster0_data = cluster_defend_data[cluster_defend_data[shooter_cluster] == 0]
+            cluster_mean_json['Cluster 0'] = {
+                'failure': cluster0_data[cluster0_data[defend_success] == 0].shape[0],
+                'success': cluster0_data[cluster0_data[defend_success] == 1].shape[0]
+            }
+            cluster1_data = cluster_defend_data[cluster_defend_data[shooter_cluster] == 1]
+            cluster_mean_json['Cluster 1'] = {
+                'failure': cluster1_data[cluster1_data[defend_success] == 0].shape[0],
+                'success': cluster1_data[cluster1_data[defend_success] == 1].shape[0]
+            }
+            cluster2_data = cluster_defend_data[cluster_defend_data[shooter_cluster] == 2]
+            cluster_mean_json['Cluster 2'] = {
+                'failure': cluster2_data[cluster2_data[defend_success] == 0].shape[0],
+                'success': cluster2_data[cluster2_data[defend_success] == 1].shape[0]
+            }
+            cluster3_data = cluster_defend_data[cluster_defend_data[shooter_cluster] == 3]
+            cluster_mean_json['Cluster 3'] = {
+                'failure': cluster3_data[cluster3_data[defend_success] == 0].shape[0],
+                'success': cluster3_data[cluster3_data[defend_success] == 1].shape[0]
+            }
+            cluster4_data = cluster_defend_data[cluster_defend_data[shooter_cluster] == 4]
+            cluster_mean_json['Cluster 4'] = {
+                'failure': cluster4_data[cluster4_data[defend_success] == 0].shape[0],
+                'success': cluster4_data[cluster4_data[defend_success] == 1].shape[0]
+            }
+
+            if position in ['SG']:
+                cluster5_data = cluster_defend_data[cluster_defend_data[shooter_cluster] == 5]
+                cluster_mean_json['Cluster 5'] = {
+                    'failure': cluster5_data[cluster5_data[defend_success] == 0].shape[0],
+                    'success': cluster5_data[cluster5_data[defend_success] == 1].shape[0]
+                }
+
+
+
+        return cluster_mean_json
+
+    @staticmethod
     def get(request, player_id, player_position):
         """
 
@@ -410,8 +470,12 @@ class GetDefendInfo(views.APIView):
         data_json = GetDefendInfo.extract_defend_info(
             player_defend_data[player_defend_data['Shooter position'] == player_position],
             player_position)
+        cluster_data = GetDefendInfo.extract_cluster_mean_defend_data(
+            defend_data[(defend_data['Shooter position'] == player_position)], player_position,
+            Player.objects.get(player_id=player_id).cluster)
 
-        return response.Response(data=data_json, status=status.HTTP_200_OK)
+        return response.Response(data={'player_data': data_json, 'cluster_data': cluster_data},
+                                 status=status.HTTP_200_OK)
 
 
 class GetTeamPointsPerPositions(views.APIView):
@@ -498,4 +562,4 @@ class GetTeamPointsPerPositions(views.APIView):
                     starters_json['PF_Subs'] = abs(points_distribution['PF'] - player.scored_points)
 
         return response.Response(data={'points_distribution': points_distribution,
-                                       'starters_sub_distribution':  starters_json}, status=status.HTTP_200_OK)
+                                       'starters_sub_distribution': starters_json}, status=status.HTTP_200_OK)
