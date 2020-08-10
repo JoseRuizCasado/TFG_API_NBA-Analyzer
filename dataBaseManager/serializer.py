@@ -108,6 +108,7 @@ class PlayerSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.is_starter = validated_data.get('is_starter', False)
+        instance.cluster = validated_data.get('cluster', -1)
         instance.played_games += validated_data.get('played_games', 0)
         instance.played_minutes += validated_data.get('played_minutes', 0)
         instance.scored_points += validated_data.get('scored_points', 0)

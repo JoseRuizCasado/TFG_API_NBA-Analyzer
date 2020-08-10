@@ -106,6 +106,7 @@ class Player(models.Model):
         CENTER = 'C'
 
     position = models.CharField(null=False, max_length=255, choices=Position.choices)
+    cluster = models.IntegerField(null=False, default=-1)
     is_starter = models.BooleanField(null=False, default=False)
     played_games = models.IntegerField(null=False, default=0)
     played_minutes = models.IntegerField(null=False, default=0)
