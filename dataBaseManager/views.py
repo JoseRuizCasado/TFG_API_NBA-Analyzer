@@ -379,7 +379,7 @@ class GetDefendInfo(views.APIView):
                 'success': 0
             }
         }
-        if position in ['SG']:
+        if position in ['SG', 'SF']:
             player_cluster5 = player_defend_data[player_defend_data[shooter_cluster] == 5]
             count5 = player_cluster5.groupby(defend_success)[defend_success].count()
             if count5.shape[0] < 2:
@@ -449,8 +449,6 @@ class GetDefendInfo(views.APIView):
                     'failure': cluster5_data[cluster5_data[defend_success] == 0].shape[0],
                     'success': cluster5_data[cluster5_data[defend_success] == 1].shape[0]
                 }
-
-
 
         return cluster_mean_json
 
