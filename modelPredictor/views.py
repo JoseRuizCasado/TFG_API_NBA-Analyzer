@@ -47,13 +47,14 @@ class PredictGame(views.APIView):
         data = request.data.get('data')
         data_to_predict = pd.DataFrame(columns=data.keys())
         data_to_predict = data_to_predict.append(data, ignore_index=True)
+        print(data_to_predict)
 
-        scaler = StandardScaler()
-        scaler.fit(data_to_predict)
-        X = scaler.transform(data_to_predict)
+        X = ModelpredictorConfig.scaler.transform(data_to_predict)
+        print(X)
 
         predicted_class = ModelpredictorConfig.prediction_model.predict(X=X)
-        if predicted_class:
+        print(predicted_class)
+        if predicted_class[0] == 1:
             prediction = 'Win'
         else:
             prediction = 'Lose'

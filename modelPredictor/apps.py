@@ -10,3 +10,4 @@ class ModelpredictorConfig(AppConfig):
     small_forwards_kmeans = joblib.load('modelPredictor/machine-learnig-model/kmeans_sf.sav')
     power_forwards_kmeans = joblib.load('modelPredictor/machine-learnig-model/kmeans_pf.sav')
     centers_kmeans = joblib.load('modelPredictor/machine-learnig-model/kmeans_c.sav')
+    scaler = joblib.load('modelPredictor/machine-learnig-model/scaler.bin')
