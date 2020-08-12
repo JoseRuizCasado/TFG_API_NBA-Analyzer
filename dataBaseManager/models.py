@@ -170,3 +170,8 @@ class Game(models.Model):
 
     def __str__(self):
         return f'{self.visitor_team} VS@ {self.local_team}'
+
+
+class ShotChart(models.Model):
+    chart_pk = models.IntegerField(primary_key=True, null=False)
+    chart = models.ImageField('Shot chart')

@@ -23,7 +23,8 @@ urlpatterns = [
     path('update-game/<str:game_id>', UpdateGame.as_view(), name='update-game'),
     path('get-defend-info/<int:player_id>/<str:player_position>', GetDefendInfo.as_view(), name='get-defend-info'),
     path('get-team-distributed-points/<int:team_id>', GetTeamPointsPerPositions.as_view(),
-         name='get-team-distributed-points')
+         name='get-team-distributed-points'),
+    path('get-chart/<int:image_pk>', GetShotChart.as_view(), name='get-chart')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

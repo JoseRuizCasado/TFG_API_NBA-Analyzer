@@ -1,7 +1,7 @@
 from django.db.models import Q, Sum
 from rest_framework import views, response, status
-from .models import Team, Player, Game
-from .serializer import TeamSerializer, PlayerSerializer, GameSerializer
+from .models import Team, Player, Game, ShotChart
+from .serializer import TeamSerializer, PlayerSerializer, GameSerializer, ShotChartSerializer
 import pandas as pd
 from .apps import DatabasemanagerConfig
 
@@ -379,7 +379,7 @@ class GetDefendInfo(views.APIView):
                 'success': 0
             }
         }
-        if position in ['SG', 'SF']:
+        if position in ['SG', 'PF']:
             player_cluster5 = player_defend_data[player_defend_data[shooter_cluster] == 5]
             count5 = player_cluster5.groupby(defend_success)[defend_success].count()
             if count5.shape[0] < 2:
@@ -561,3 +561,12 @@ class GetTeamPointsPerPositions(views.APIView):
 
         return response.Response(data={'points_distribution': points_distribution,
                                        'starters_sub_distribution': starters_json}, status=status.HTTP_200_OK)
+
+
+class GetShotChart(views.APIView):
+
+    @staticmethod
+    def get(request, image_pk):
+        chart = ShotChart.objects.get(chart_pk=image_pk)
+        serializer = ShotChartSerializer(chart)
+        return response.Response(data={'url': serializer.data}, status=status.HTTP_200_OK)

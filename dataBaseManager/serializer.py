@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Team, Player, Game
+from .models import Team, Player, Game, ShotChart
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -74,10 +74,10 @@ class TeamSerializer(serializers.ModelSerializer):
             / (instance.played_games + validated_data.get('played_games', 0))
         instance.free_throws_miss_per_game = (validated_data.get('free_throws_miss', 0) + instance.free_throws_miss) \
                                              / (instance.played_games + validated_data.get('played_games', 0))
-        instance.free_throws_attempts_per_game =\
+        instance.free_throws_attempts_per_game = \
             (validated_data.get('free_throws_attempts', 0) + instance.free_throws_attempts) \
             / (instance.played_games + validated_data.get('played_games', 0))
-        instance.assists_per_game = (validated_data.get('assists', 0) + instance.assists)\
+        instance.assists_per_game = (validated_data.get('assists', 0) + instance.assists) \
                                     / (instance.played_games + validated_data.get('played_games', 0))
         instance.offensive_rebounds_per_game = \
             (validated_data.get('offensive_rebounds', 0) + instance.offensive_rebounds) \
@@ -190,3 +190,11 @@ class GameSerializer(serializers.ModelSerializer):
         instance.information_loaded = validated_data.get('information_loaded', instance.information_loaded)
         instance.save()
         return instance
+
+
+class ShotChartSerializer(serializers.ModelSerializer):
+    chart = serializers.ImageField(max_length=None, use_url=True)
+
+    class Meta:
+        model = ShotChart
+        fields = '__all__'
