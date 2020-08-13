@@ -24,7 +24,9 @@ urlpatterns = [
     path('get-defend-info/<int:player_id>/<str:player_position>', GetDefendInfo.as_view(), name='get-defend-info'),
     path('get-team-distributed-points/<int:team_id>', GetTeamPointsPerPositions.as_view(),
          name='get-team-distributed-points'),
-    path('get-chart/<int:image_pk>', GetShotChart.as_view(), name='get-chart')
+    path('get-chart/<int:image_pk>', GetShotChart.as_view(), name='get-chart'),
+    path('get-defend-inform/<int:team_id>/<int:opponent_team_id>', GetBetterDefenderByOpponentStarters.as_view(),
+         name='get-defend-inform')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

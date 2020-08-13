@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 from django.db.models import Q, Sum
 from rest_framework import views, response, status
 from .models import Team, Player, Game, ShotChart
@@ -474,6 +476,73 @@ class GetDefendInfo(views.APIView):
 
         return response.Response(data={'player_data': data_json, 'cluster_data': cluster_data},
                                  status=status.HTTP_200_OK)
+
+
+class GetBetterDefenderByOpponentStarters(views.APIView):
+
+    @staticmethod
+    def get_defend_accuracy(shooter_cluster, position, player_id):
+        shooter_cluster_col = 'Shooter Cluster'
+        defend_success = 'Defend Success'
+        defend_data = DatabasemanagerConfig.defend_data
+        player_defend_data = defend_data[(defend_data['Defender ID'] == player_id)
+                                         & (defend_data[shooter_cluster_col] == shooter_cluster)
+                                         & (defend_data['Defender position'] == position.upper())
+                                         & (defend_data['Shooter position'] == position.upper())]
+
+        total = player_defend_data.shape[0]
+        if total > 0:
+            success = player_defend_data[player_defend_data[defend_success] == 1].shape[0]
+            return success / total
+        else:
+            return 0
+
+    @staticmethod
+    def get(request, team_id, opponent_team_id):
+        best_defenders = []
+        opponents_starters = []
+        for starter in Player.objects.filter(team_id=opponent_team_id, is_starter=True).order_by('position'):
+            print(f'name: {starter.first_name} {starter.last_name}, position: {starter.position}')
+            opponents_starters.append(starter.player_id)
+            accuracy = []
+            for player in Player.objects.filter(team_id=team_id, position=starter.position):
+                accuracy.append((player.player_id,
+                                 GetBetterDefenderByOpponentStarters.get_defend_accuracy(player.cluster,
+                                                                                         starter.position,
+                                                                                         player.player_id)))
+
+            best_option = max(accuracy, key=itemgetter(1))[0]
+            if best_option in best_defenders:
+                res = [it for it in accuracy if it[0] != best_option]
+                best_option = max(res, key=itemgetter(1))[0]
+
+            best_defenders.append(best_option)
+
+        pg_player = Player.objects.get(player_id=best_defenders[2])
+        opponent_pg_player = Player.objects.get(player_id=opponents_starters[2])
+        sg_player = Player.objects.get(player_id=best_defenders[4])
+        opponent_sg_player = Player.objects.get(player_id=opponents_starters[4])
+        sf_player = Player.objects.get(player_id=best_defenders[3])
+        opponent_sf_player = Player.objects.get(player_id=opponents_starters[3])
+        pf_player = Player.objects.get(player_id=best_defenders[1])
+        opponent_pf_player = Player.objects.get(player_id=opponents_starters[1])
+        c_player = Player.objects.get(player_id=best_defenders[0])
+        opponent_c_player = Player.objects.get(player_id=opponents_starters[0])
+
+        best_defenders = {
+            'PG': f'{pg_player.first_name} {pg_player.last_name}',
+            'OpPG': f'{opponent_pg_player.first_name} {opponent_pg_player.last_name}',
+            'SG': f'{sg_player.first_name} {sg_player.last_name}',
+            'OpSG': f'{opponent_sg_player.first_name} {opponent_sg_player.last_name}',
+            'SF': f'{sf_player.first_name} {sf_player.last_name}',
+            'OpSF': f'{opponent_sf_player.first_name} {opponent_sf_player.last_name}',
+            'PF': f'{pf_player.first_name} {pf_player.last_name}',
+            'OpPF': f'{opponent_pf_player.first_name} {opponent_pf_player.last_name}',
+            'C': f'{c_player.first_name} {c_player.last_name}',
+            'OpC': f'{opponent_c_player.first_name} {opponent_c_player.last_name}'
+        }
+
+        return response.Response(data=best_defenders, status=status.HTTP_200_OK)
 
 
 class GetTeamPointsPerPositions(views.APIView):
