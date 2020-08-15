@@ -499,6 +499,25 @@ class GetBetterDefenderByOpponentStarters(views.APIView):
 
     @staticmethod
     def get(request, team_id, opponent_team_id):
+        """
+        Get the best starting line up base on the starting line up of the opponent team.
+        :param request:
+        :param team_id: Team numerical identifier
+        :param opponent_team_id: Opponent Team numerical identifier
+        :return: JSON with better option per position:
+            {
+                "PG": "D'Angelo Russel",
+                "OpPG": "Jeff Teague",
+                "SG": "Kobe Bryant",
+                "OpSG": "Kyle Korver",
+                "SF": "Anthony Brown",
+                "OpSF": "Kent Bazemore",
+                "PF": "Julius Randle",
+                "OpPF": "Paul Millsap",
+                "C": "Roy Hibbert",
+                "OpC": "Al Horford"
+            }
+        """
         best_defenders = []
         opponents_starters = []
         for starter in Player.objects.filter(team_id=opponent_team_id, is_starter=True).order_by('position'):
