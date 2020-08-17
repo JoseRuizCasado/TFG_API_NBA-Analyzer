@@ -684,8 +684,24 @@ class PostShotCharts(views.APIView):
 
         player_shot_charts = PlayerShotCharts()
         player_shot_charts.chart_pk = player_id
-        player_shot_charts.scatter_chart.save(scatter_path, File(open(scatter_path, 'rb')))
-        player_shot_charts.hexbin_chart.save(hexbin_path, File(open(hexbin_path, 'rb')))
+        scatter_file = open(scatter_path, 'rb')
+        player_shot_charts.scatter_chart.save(scatter_path, File(scatter_file))
+        hexbin_file = open(hexbin_path, 'rb')
+        player_shot_charts.hexbin_chart.save(hexbin_path, File(hexbin_file))
         player_shot_charts.save()
+        scatter_file.close()
+        hexbin_file.close()
+
+        return response.Response(data={'scatter_plot': player_shot_charts.scatter_chart.url,
+                                       'hexbin_plot': player_shot_charts.hexbin_chart.url},
+                                 status=status.HTTP_200_OK)
+
+
+class PostAllCharts(views.APIView):
+
+    @staticmethod
+    def post(request):
+        for player in Player.objects.all():
+            PostShotCharts.post(request=request, player_id=player.player_id)
 
         return response.Response(status=status.HTTP_200_OK)

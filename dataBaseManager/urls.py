@@ -27,7 +27,8 @@ urlpatterns = [
     path('get-chart/<int:image_pk>', GetShotChart.as_view(), name='get-chart'),
     path('get-defend-inform/<int:team_id>/<int:opponent_team_id>', GetBetterDefenderByOpponentStarters.as_view(),
          name='get-defend-inform',),
-    path('make-shot-charts/<int:player_id>', PostShotCharts.as_view(), name='make-shot-charts')
+    path('make-shot-charts/<int:player_id>', PostShotCharts.as_view(), name='make-shot-charts'),
+    path('make-all-shot-charts', PostAllCharts.as_view(), name='make-all-shot-charts')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

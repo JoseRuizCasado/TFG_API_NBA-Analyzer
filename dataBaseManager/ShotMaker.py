@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import seaborn as sns
 from matplotlib.patches import Circle, Rectangle, Arc
@@ -97,6 +99,7 @@ def make_scatter_plot(player_data, player_id):
 
     path = f'{player_id}-scatter.png'
     plt.savefig(path)
+    plt.close()
     return path
 
 
@@ -111,4 +114,5 @@ def make_hexbin_plot(player_data, player_id):
     plt.ylim(422.5, -47.5)
     path = f'{player_id}-hexbin.png'
     plt.savefig(path)
+    plt.close()
     return path
