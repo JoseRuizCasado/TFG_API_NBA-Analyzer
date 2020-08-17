@@ -172,6 +172,7 @@ class Game(models.Model):
         return f'{self.visitor_team} VS@ {self.local_team}'
 
 
-class ShotChart(models.Model):
+class PlayerShotCharts(models.Model):
     chart_pk = models.IntegerField(primary_key=True, null=False)
-    chart = models.ImageField('Shot chart')
+    scatter_chart = models.ImageField('Scatter shot chart')
+    hexbin_chart = models.ImageField('Hexbin shot chart')

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Team, Player, Game, ShotChart
+from .models import Team, Player, Game, PlayerShotCharts
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -192,9 +192,13 @@ class GameSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ShotChartSerializer(serializers.ModelSerializer):
-    chart = serializers.ImageField(max_length=None, use_url=True)
+class PlayerShotChartSerializer(serializers.ModelSerializer):
+    scatter_chart = serializers.ImageField(max_length=None, use_url=True)
+    hexbin_chart = serializers.ImageField(max_length=None, use_url=True)
 
     class Meta:
-        model = ShotChart
+        model = PlayerShotCharts
         fields = '__all__'
+
+    def create(self, validated_data):
+        return PlayerShotCharts.objects.create(**validated_data)

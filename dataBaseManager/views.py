@@ -1,11 +1,13 @@
 from operator import itemgetter
 
+from django.core.files import File
 from django.db.models import Q, Sum
 from rest_framework import views, response, status
-from .models import Team, Player, Game, ShotChart
-from .serializer import TeamSerializer, PlayerSerializer, GameSerializer, ShotChartSerializer
+from .models import Team, Player, Game, PlayerShotCharts
+from .serializer import TeamSerializer, PlayerSerializer, GameSerializer, PlayerShotChartSerializer
 import pandas as pd
 from .apps import DatabasemanagerConfig
+from .ShotMaker import make_hexbin_plot, make_scatter_plot
 
 
 class ListTeams(views.APIView):
@@ -655,6 +657,35 @@ class GetShotChart(views.APIView):
 
     @staticmethod
     def get(request, image_pk):
-        chart = ShotChart.objects.get(chart_pk=image_pk)
-        serializer = ShotChartSerializer(chart)
-        return response.Response(data={'url': serializer.data}, status=status.HTTP_200_OK)
+        """
+
+        :param request:
+        :param image_pk: Player id to take his shots charts.
+        :return: shot charts url.
+        """
+        chart = PlayerShotCharts.objects.get(chart_pk=image_pk)
+        serializer = PlayerShotChartSerializer(chart)
+        return response.Response(data={'data': serializer.data}, status=status.HTTP_200_OK)
+
+
+class PostShotCharts(views.APIView):
+
+    @staticmethod
+    def post(request, player_id):
+        """
+
+        :param request:
+        :param player_id: Player id to make his shots charts
+        :return:
+        """
+        shot_data = DatabasemanagerConfig.shot_data
+        scatter_path = make_scatter_plot(shot_data[shot_data['PLAYER_ID'] == player_id], player_id)
+        hexbin_path = make_hexbin_plot(shot_data[shot_data['PLAYER_ID'] == player_id], player_id)
+
+        player_shot_charts = PlayerShotCharts()
+        player_shot_charts.chart_pk = player_id
+        player_shot_charts.scatter_chart.save(scatter_path, File(open(scatter_path, 'rb')))
+        player_shot_charts.hexbin_chart.save(hexbin_path, File(open(hexbin_path, 'rb')))
+        player_shot_charts.save()
+
+        return response.Response(status=status.HTTP_200_OK)
