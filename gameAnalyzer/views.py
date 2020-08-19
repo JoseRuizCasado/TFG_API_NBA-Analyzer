@@ -17,7 +17,7 @@ class AnalyzeGameById(views.APIView):
         game_json = requests.get(f'http://127.0.0.1:8000/dbmanager/game/{game_id}').json()['game']
         # Check if Game info is already loaded
         if game_json['information_loaded']:
-            return response.Response({'success': 'Game info is already loaded on the system'})
+            return response.Response({'success': 'Game info is already loaded on the system'}, status=status.HTTP_200_OK)
         # Take home Team players
         home_team_players = \
             requests.get(f'http://127.0.0.1:8000/dbmanager/players-from-team/{game_json["local_team"]}').json()

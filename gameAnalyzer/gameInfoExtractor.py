@@ -1,6 +1,63 @@
+import math
 import re
 import pandas as pd
 import json
+from DefendDataFileManager import insert_defend_data
+
+
+def distance(x1, y1, x2, y2):
+    return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+
+def guess_defender(shots_events, misses, game_id):
+    with open(f'gameAnalyzer/data/tracking/{game_id}') as json_file:
+        coordinates = json.load(json_file)
+
+    shooter_defender_list = []
+    for ind, shot in shots_events.iterrows():
+        print(f'Event: {shot["EVENTNUM"]}, game {game_id}')
+        event = [e for e in coordinates['events'] if int(e['eventId']) == shot['EVENTNUM']]
+        event_defenders = []
+        cont = -1
+        if event:
+            for moment in event[0]['moments']:
+                cont += 1
+                print(cont)
+                # Take shooter coordinates
+                player_coordinates_moment_list = [p for p in moment[5] if int(p[1]) == shot['PLAYER1_ID']]
+                print(f'Moment list: {player_coordinates_moment_list}, player id: {shot["PLAYER1_ID"]}')
+                if player_coordinates_moment_list:
+                    player_coordinates_moment = player_coordinates_moment_list[0]
+                    player_x, player_y = (player_coordinates_moment[2], player_coordinates_moment[3])
+                    # Take the players from the opposite team to the shooter.
+                    possible_defenders = [d for d in moment[5] if
+                                          (int(d[0]) != shot['PLAYER1_TEAM_ID']) & (int(d[0]) != -1)]
+                    if possible_defenders:
+                        # Compute the distance of each possible defender to the shooter.
+                        defenders_distance = [distance(player_x, player_y, defender[2], defender[3]) for defender in
+                                              possible_defenders]
+                        # Select the lowest distance.
+                        min_distance = min(defenders_distance)
+                        # Get the nearest defender.
+                        nearest_defender = [d for d in possible_defenders if
+                                            distance(player_x, player_y, d[2], d[3]) == min_distance]
+                        event_defenders.append(nearest_defender[0][1])
+
+        # The selected defender will be the defender that has more appearances as defender through all moment recorded
+        # for the shoot event.
+        # Calculate the appearances of each defender in the list.
+        print(f'Possible defenders: {event_defenders}')
+        defender_appearances = [event_defenders.count(d) for d in event_defenders]
+        if defender_appearances:
+            # Take the maximum appearances
+            max_appearances = max(defender_appearances)
+            # Transform defender list to avoid duplicates items.
+            defenders_list = list(dict.fromkeys(event_defenders))
+            # Take the defenders who have more appearances in the list.
+            defender = [d for d in defenders_list if event_defenders.count(d) == max_appearances]
+            shooter_defender_list.append((shot['PLAYER1_ID'], defender[0], misses))
+
+    return shooter_defender_list
 
 
 def extract_player_shots_coordinates(game_id, player_id, team_id):
@@ -134,7 +191,6 @@ def extract_game_info(game_id, team_id, players, description):
         # Load Player 3 field goals made.
         player_3pt_misses = player_misses[player_misses[description].str.contains('3PT')].shape[0]
 
-        # TODO: Load shots coordinates
         extract_player_shots_coordinates(game_id, player['player_id'], team_id)
 
         # Load Player made free throws.
@@ -264,5 +320,14 @@ def extract_game_info(game_id, team_id, players, description):
         team_dict['blocks'] += player['blocks']
         team_dict['turnovers'] += player['turnovers']
         team_dict['personal_fouls'] += player['personal_fouls']
+
+    game_made_shots = game_data[game_data['EVENTMSGTYPE'] == 1]
+    game_miss_shots = game_data[game_data['EVENTMSGTYPE'] == 2]
+    defender_list = []
+    defender_list += guess_defender(game_made_shots, 0, f'{game_id}.json')
+    defender_list += guess_defender(game_miss_shots, 1, f'{game_id}.json')
+
+    shooter_defender = pd.DataFrame(defender_list, columns=['Shooter ID', 'Defender ID', 'Defend Success'])
+    insert_defend_data(shooter_defender)
 
     return team_dict
