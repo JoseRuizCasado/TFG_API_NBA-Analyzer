@@ -58,3 +58,28 @@ class PredictGame(views.APIView):
 
         return response.Response(data={'prediction': prediction}, status=status.HTTP_200_OK)
 
+
+class PredictPlayerCluster:
+
+    @staticmethod
+    def get(request, position):
+        data = request.data.get('data')
+        data_to_predict = pd.DataFrame(columns=data.keys)
+        data_to_predict = data_to_predict.append(data, ignore_index=True)
+
+        X = ModelpredictorConfig.pg_scaler.transform(data_to_predict)
+
+        prediction = -1
+        if position == 'PG':
+            prediction = ModelpredictorConfig.point_guards_kmeans.predict(X=X)
+        elif position == 'SG':
+            prediction = ModelpredictorConfig.shooting_guards_kmeans.predict(X=X)
+        elif position == 'SF':
+            prediction = ModelpredictorConfig.small_forwards_kmeans.predict(X=X)
+        elif position == 'PF':
+            prediction = ModelpredictorConfig.power_forwards_kmeans.predict(X=X)
+        elif position == 'C':
+            prediction = ModelpredictorConfig.centers_kmeans.predict(X=X)
+
+        return response.Response(data={'predicted_class': prediction}, status=status.HTTP_200_OK)
+
