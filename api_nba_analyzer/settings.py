@@ -137,5 +137,5 @@ REST_FRAMEWORK = {
 STATICFILES_DIRS =(
     os.path.join(BASE_DIR, '..'), '/static',)
 
-MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'uploaded_media')
+MEDIA_ROOT = os.path.join(BASE_DIR, '.', 'uploaded_media')
 MEDIA_URL = '/media/'
